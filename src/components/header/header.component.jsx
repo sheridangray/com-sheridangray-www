@@ -26,9 +26,11 @@ export const Header = () => {
           </div>
         ) : (
           <div className="options">
-            <NavLink to='/sign-in' className="option">
-              SIGN IN
-            </NavLink>
+          {
+            // <NavLink to='/sign-in' className="option">
+            //   SIGN IN
+            // </NavLink>
+          }
           </div>
         )
       }

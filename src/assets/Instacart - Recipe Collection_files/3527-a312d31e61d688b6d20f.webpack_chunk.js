@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[3527],{93527:(s,a,c)=>{c.r(a),c.d(a,{default:()=>k});c(0);var e=c(3946),l=c(3);const k=({children:s,className:a,onClick:c})=>(0,l.tZ)(e.NavLink,{to:"/",className:a,onClick:c},s)}}]);
