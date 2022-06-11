@@ -20,6 +20,13 @@ const ProfileMenu = () => {
             }>
                 SIGN OUT
             </div>
+            <div className="option" onClick={() => {
+                dispatch(signOutStart());
+                dispatch(toggleProfileMenuHidden());
+            }
+            }>
+                SIGN OUT
+            </div>
         </div>
     )
 }

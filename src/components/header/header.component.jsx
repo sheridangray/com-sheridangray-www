@@ -17,21 +17,54 @@ export const Header = () => {
 
   return (
     <div className="header-container">
-      <Link to='/' className="logo">
-        Sheridan Gray
-      </Link>
+      { currentUser ? 
+        (
+          <Link to='/' className="logo">
+            Life
+          </Link>
+        ) : (
+          <Link to='/' className="logo">
+            Sheridan Gray
+          </Link>
+        )
+      }
       { currentUser ? (
           <div className="options">
+            <NavLink 
+              to='/health' 
+              className={isActive => "nav-link" + (!isActive ? " unselected" : " selected")}
+            >
+              Health
+            </NavLink>
+            <NavLink 
+              to='/relationships' 
+              className={isActive => "nav-link" + (!isActive ? " unselected" : " selected")}
+            >
+              Relationships
+            </NavLink>
+            <NavLink 
+              to='/money' 
+              className={isActive => "nav-link" + (!isActive ? " unselected" : " selected")}
+            >
+              Money
+            </NavLink>
+            <NavLink 
+              to='/happiness' 
+              className={isActive => "nav-link" + (!isActive ? " unselected" : " selected")}
+            >
+              Happiness
+            </NavLink>
+            <NavLink 
+              to='/food' 
+              className={isActive => "nav-link" + (!isActive ? " unselected" : " selected")}
+            >
+              Food
+            </NavLink>
             <ProfileBadge />
+
           </div>
         ) : (
-          <div className="options">
-          {
-            // <NavLink to='/sign-in' className="option">
-            //   SIGN IN
-            // </NavLink>
-          }
-          </div>
+          <div className="options"></div>
         )
       }
       {
