@@ -19,17 +19,12 @@ export const Header = () => {
     <div className="header-container">
       { currentUser ? 
         (
-          <Link to='/' className="logo">
-            Life
-          </Link>
-        ) : (
-          <Link to='/' className="logo">
-            Sheridan Gray
-          </Link>
-        )
-      }
-      { currentUser ? (
-          <div className="options">
+          <div className="header-left">
+            <div className="options">
+              <Link to='/' className="logo">
+                Life
+              </Link>
+              
             <NavLink 
               to='/health' 
               className={isActive => "nav-link" + (!isActive ? " unselected" : " selected")}
@@ -60,9 +55,18 @@ export const Header = () => {
             >
               Food
             </NavLink>
+          </div>
+          </div>
+        ) : (
+          <Link to='/' className="logo">
+            Sheridan Gray
+          </Link>
+        )
+      }
+      { currentUser ? (
+
             <ProfileBadge />
 
-          </div>
         ) : (
           <div className="options"></div>
         )
