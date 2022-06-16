@@ -9,15 +9,10 @@ import "./profile-badge.styles.scss";
 const ProfileBadge = () => {
     const currentUser = useSelector(selectCurrentUser);
     const dispatch = useDispatch();
-
     return (
-        <div
-            className='profile-badge'
-            style={{
-                backgroundImage: `url(${currentUser.photoUrl})`
-            }}
-            onClick={() => dispatch(toggleProfileMenuHidden())}
-        />
+        <>
+        <img src={currentUser.photoURL} className="profile-badge" onClick={() => dispatch(toggleProfileMenuHidden())}/>
+        </>
     )
 }
 

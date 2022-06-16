@@ -9,11 +9,14 @@ import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectIsProfileMenuHidden } from '../../redux/profile-menu/profile-menu.selectors'
 
 import "./header.styles.scss"
+import { googleSignInStart } from '../../redux/user/user.actions';
+import Logo from '../../assets/Logo.png';
 
 export const Header = () => {
 
   const currentUser = useSelector(selectCurrentUser);
   const isProfileMenuHidden = useSelector(selectIsProfileMenuHidden)
+  const dispatch = useDispatch();
 
   return (
     <div className="header-container">
@@ -22,7 +25,7 @@ export const Header = () => {
           <div className="header-left">
             <div className="options">
               <Link to='/' className="logo">
-                Life
+              <img src={Logo} alt="" />
               </Link>
               
             <NavLink 
@@ -68,7 +71,11 @@ export const Header = () => {
             <ProfileBadge />
 
         ) : (
-          <div className="options"></div>
+          <div className="options">
+            
+           <label onClick={() => dispatch(googleSignInStart())}>Log in</label>
+      
+          </div>
         )
       }
       {
