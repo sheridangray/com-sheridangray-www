@@ -21,9 +21,8 @@ import MoneyPage from "./pages/money/money.component";
 
 function App() {
   const currentUser = useSelector(selectCurrentUser);
+  
   const dispatch = useDispatch();
-
-  // console.log(currentUser);
 
   useEffect(() => {
     dispatch(checkUserSession());
@@ -32,7 +31,6 @@ function App() {
   return (
     <div className="App">
       <Header />
-
       <Routes>
         <Route
           exact

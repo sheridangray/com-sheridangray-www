@@ -1,6 +1,6 @@
-import { takeLatest, put, all, call } from 'redux-saga/effects';
+import { takeLatest, put, all, call } from "redux-saga/effects";
 
-import UserActionTypes from './user.types';
+import UserActionTypes from "./user.types";
 
 import {
   signInSuccess,
@@ -8,15 +8,16 @@ import {
   signOutSuccess,
   signOutFailure,
   signUpSuccess,
-  signUpFailure
-} from './user.actions';
+  signUpFailure,
+} from "./user.actions";
 
 import {
   auth,
   googleProvider,
   createUserProfileDocument,
-  getCurrentUser
-} from '../../firebase/firebase.utils';
+  getCurrentUser,
+} from "../../firebase/firebase.utils";
+import { getUsers } from "../../Auth/userAuth";
 
 export function* getSnapshotFromUserAuth(userAuth, additionalData) {
   try {
@@ -25,8 +26,30 @@ export function* getSnapshotFromUserAuth(userAuth, additionalData) {
       userAuth,
       additionalData
     );
-    const userSnapshot = yield userRef.get();
-    yield put(signInSuccess({ id: userSnapshot.id, ...userSnapshot.data() }));
+
+    const userList = yield getUsers();
+    let userAuthenticated = false;
+    userList.forEach((element) => {
+      // console.log(element.email, userAuth.email, "check mails")
+      if (element.email == userAuth.email) {
+        userAuthenticated = true;
+      }
+    });
+    if (userAuthenticated) {
+      const userSnapshot = yield userRef.get();
+      yield put(signInSuccess({ id: userSnapshot.id, ...userSnapshot.data() }));
+    } else {
+      console.log("user is not authenticated");
+      yield put(
+        signInFailure({
+          isErr: true,
+          heading: "Sorry, you’re not allowed to log in",
+          subHeading:
+            "Like I said, this is my little part of the web. I only let specific people in.",
+        })
+      );
+      return;
+    }
   } catch (error) {
     yield put(signInFailure(error));
   }
@@ -35,10 +58,30 @@ export function* getSnapshotFromUserAuth(userAuth, additionalData) {
 export function* signInWithGoogle() {
   try {
     const { user } = yield auth.signInWithPopup(googleProvider);
-    const userRef = yield call(createUserProfileDocument, user);
-    const userSnapshot = yield userRef.get();
-
-    yield put(signInSuccess({id: userSnapshot.id, ...userSnapshot.data()}));
+    const userList = yield getUsers();
+    let userAuthenticated = false;
+    userList.forEach((element) => {
+      console.log(element, user.email);
+      if (element.email == user.email) {
+        userAuthenticated = true;
+      }
+    });
+    if (userAuthenticated) {
+      const userRef = yield call(createUserProfileDocument, user);
+      const userSnapshot = yield userRef.get();
+      yield put(signInSuccess({ id: userSnapshot.id, ...userSnapshot.data() }));
+    } else {
+      console.log("user is not authenticated");
+      yield put(
+        signInFailure({
+          isErr: true,
+          heading: "Sorry, you’re not allowed to log in",
+          subHeading:
+            "Like I said, this is my little part of the web. I only let specific people in.",
+        })
+      );
+      return;
+    }
   } catch (error) {
     yield put(signInFailure(error));
   }
@@ -116,6 +159,6 @@ export function* userSagas() {
     call(onCheckUserSession),
     call(onSignOutStart),
     call(onSignUpStart),
-    call(onSignUpSuccess)
+    call(onSignUpSuccess),
   ]);
 }
