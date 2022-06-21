@@ -18,6 +18,7 @@ import { checkUserSession } from "./redux/user/user.actions";
 
 import "./App.scss";
 import MoneyPage from "./pages/money/money.component";
+import SettingPage from "./pages/setting/setting.component";
 
 function App() {
   const currentUser = useSelector(selectCurrentUser);
@@ -44,16 +45,6 @@ function App() {
             )
           }
         />
-
-        {/* <Route exact path='sign-in' element={
-            currentUser ? (
-              // <Navigate replace to="/" />
-              <LifePage />
-            ) : (
-              <SignInAndSignUpPage />
-            )
-          } 
-        /> */}
         <Route
           exact
           path="/health"
@@ -89,6 +80,12 @@ function App() {
           path="/playground"
           activeClassName="active"
           element={<PlaygroundPage />}
+        />
+        <Route
+          exact
+          path="/setting"
+          activeClassName="active"
+          element={<SettingPage />}
         />
       </Routes>
     </div>

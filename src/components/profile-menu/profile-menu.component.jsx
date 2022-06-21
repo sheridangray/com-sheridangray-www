@@ -11,8 +11,10 @@ const ProfileMenu = () => {
   const dispatch = useDispatch();
 
   return (
-    <div className="profile-menu" >
-      <div className="option1">Settings</div>
+    <div className="profile-menu">
+      <div className="option1">
+        <Link to="/setting">Settings</Link>
+      </div>
       <div
         className="option"
         onClick={() => {
