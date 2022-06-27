@@ -37,6 +37,11 @@
     align-items: center;
     font-weight: 600;
     color: #5a5a5a;
+    border-bottom: 2px solid transparent;
+    &:hover{
+      border-bottom-color:#1F51E5;
+      text-decoration: none;
+    }
   }
 }
 .profile-badge {
