@@ -22,7 +22,7 @@ const ProfileMenu = () => {
           dispatch(toggleProfileMenuHidden());
         }}
       >
-        Log Out
+        <Link to="/"> Log Out</Link>
       </div>
     </div>
   );

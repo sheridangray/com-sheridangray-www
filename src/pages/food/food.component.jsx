@@ -3,7 +3,6 @@ import recipee from "../../assets/meals/recipee.svg";
 import meal from "../../assets/meals/meal.svg";
 import arrow from "../../assets/meals/arrow.svg";
 import rightarrow from "../../assets/meals/rightarrow.svg";
-import fried from "../../assets/meals/fried.png";
 
 import "./food.styles.scss";
 import ChooseMealsPage from "../../components/choose-meals/choosemeals.component";
@@ -11,6 +10,7 @@ import {
   add,
   eachDayOfInterval,
   endOfMonth,
+  endOfWeek,
   format,
   getDay,
   isEqual,
@@ -20,34 +20,60 @@ import {
   parse,
   parseISO,
   startOfToday,
-} from 'date-fns'
+} from "date-fns";
+import startOfWeek from "date-fns/startOfWeek";
+import CalendarItems from "../../components/CalendarItems/CalendarItems";
 const FoodPage = () => {
-  const [currentNum,setCurrentNum] = useState(new Date().getDate());
+  let today = startOfToday();
+
+  const [currentNum, setCurrentNum] = useState(new Date().getDate());
   const [modalView, setModalView] = useState(false);
-  let today = startOfToday()
-  let [selectedDay, setSelectedDay] = useState(today)
-  let [currentMonth, setCurrentMonth] = useState(format(today, 'MMM-yyyy'))
-  let firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
+  let [selectedDay, setSelectedDay] = useState(today);
+  let [currentWeek, setCurretWeek] = useState(today);
+  const dayNum = getDay(today);
+  const weekStart = startOfWeek(
+    currentWeek,
+    { weekStartsOn: dayNum },
+    { days: 7 }
+  );
+  const weekEnd = endOfWeek(currentWeek, { weekStartsOn: dayNum }, { days: 7 });
 
   let days = eachDayOfInterval({
-    start: firstDayCurrentMonth,
-    end: endOfMonth(firstDayCurrentMonth),
-  })
+    start: weekStart,
+    end: weekEnd,
+  });
 
-  function previousMonth() {
-    
-    let firstDayNextMonth = add(firstDayCurrentMonth, { months: -1 })
-    setCurrentMonth(format(firstDayNextMonth, 'MMM-yyyy'))
+  function previousWeek() {
+    let firstDayOfNextWeek = add(weekStart, { weeks: -1 });
+    setCurretWeek(firstDayOfNextWeek);
   }
 
-  function nextMonth() {
-    let firstDayNextMonth = add(firstDayCurrentMonth, { months: 1 })
-    setCurrentMonth(format(firstDayNextMonth, 'MMM-yyyy'))
+  function nextWeek() {
+    let firstDayOfNextWeek = add(weekStart, { weeks: 1 });
+    setCurretWeek(firstDayOfNextWeek);
   }
 
-  // let selectedDayMeetings = meetings.filter((meeting) =>
-  //   isSameDay(parseISO(meeting.startDatetime), selectedDay)
-  // )
+  function showTodayWeek() {
+    setCurretWeek(today);
+  }
+
+  // Meal Category Array
+  const mealCategories = [
+    { type: "Breakfast", checked: true },
+    { type: "Lunch", checked: false },
+    { type: "Dinner", checked: false },
+  ];
+
+  const [mealCategory, setMealCategory] = useState(mealCategories);
+
+  const handleChekBox = (e) => {
+    let name = e.target.value;
+    let checkedIItem = e.target.checked;
+    setMealCategory((p) =>
+      p.map((el) => (el.type === name ? { ...el, checked: checkedIItem } : el))
+    );
+  };
+
   return (
     <div className="meal_plan_row">
       <div className="recipee_sidebar">
@@ -65,56 +91,46 @@ const FoodPage = () => {
         <div className="meal_planner_row">
           <div className="meals_today">
             <h4>Meal Planner</h4>
-            <button>Today</button>
+            <button onClick={() => showTodayWeek()}>Today</button>
             <div className="arrows">
-              <button onClick={previousMonth}>
+              <button onClick={previousWeek}>
                 <img src={arrow} />
               </button>
-              <button onClick={nextMonth}>
+              <button onClick={nextWeek}>
                 <img src={rightarrow} />
               </button>
             </div>
             <span className="time_between">
-            {format(firstDayCurrentMonth, 'MMMM yyyy')}
+              {format(weekStart, "MMMM d")} -{" "}
+              {format(weekStart, "MMMM") !== format(weekEnd, "MMMM")
+                ? format(weekEnd, "MMMM d")
+                : format(weekEnd, "d")}
             </span>
           </div>
           <div className="lunch_type">
-            <label>
-              <input type="radio" name="food" checked></input>
-              <span></span>
-              Breakfast
-            </label>
-            <label>
-              <input type="radio" name="food"></input>
-              <span></span>
-              Lunch
-            </label>
-            <label>
-              <input type="radio" name="food"></input>
-              <span></span>
-              Dinner
-            </label>
+            {mealCategory.map((el, i) => (
+              <label>
+                <input
+                  type="radio"
+                  name="food"
+                  value={el.type}
+                  checked={el.checked}
+                  onChange={(e) => handleChekBox(e, el.checked)}
+                ></input>
+                <span></span>
+                {el.type}
+              </label>
+            ))}
           </div>
         </div>
         <div className="mealsday_row">
-         {days.map((day)=>  <div className="meals_col">
-              <h6 className="meal_day">{format(new Date(day), 'EEEE')}</h6>
-              <h5 className="meals_date"><time dateTime={format(day, 'yyyy-MM-dd')}>
-                      {format(day, 'd')}
-                    </time></h5>
-              <div className="dish_with_swap">
-                <img src={fried} />
-
-                <h4 className="dishname">Fried Eggs</h4>
-                <div className="swap_rate">
-                  <span>Swap</span>
-                  <span onClick={() => setModalView(true)}>Choose</span>
-                  <span>Rate</span>
-                </div>
-              </div>
-            </div>)}
-           
-          
+          {days.map((day) => (
+            <CalendarItems
+              mealDay={format(new Date(day), "EEEE")}
+              mealDate={format(day, "d")}
+              setModalView={setModalView}
+            />
+          ))}
 
           {modalView && <ChooseMealsPage setModalView={setModalView} />}
 
