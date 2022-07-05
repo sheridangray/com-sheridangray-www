@@ -3,10 +3,6 @@ import recipee from "../../assets/meals/recipee.svg";
 import meal from "../../assets/meals/meal.svg";
 import arrow from "../../assets/meals/arrow.svg";
 import rightarrow from "../../assets/meals/rightarrow.svg";
-import selectimage from "../../assets/food/upload.png";
-import del from "../../assets/food/delete.png";
-import edit from "../../assets/food/edit.png";
-import sort from "../../assets/food/sort.png";
 
 import "./food.styles.scss";
 import ChooseMealsPage from "../../components/choose-meals/choosemeals.component";
@@ -27,6 +23,7 @@ import {
 } from "date-fns";
 import startOfWeek from "date-fns/startOfWeek";
 import CalendarItems from "../../components/CalendarItems/CalendarItems";
+import CreateRecipee from "../../components/create-recipee/CreateRecipee.component";
 const FoodPage = () => {
   let today = startOfToday();
 
@@ -251,187 +248,7 @@ const FoodPage = () => {
         </div>
       )}
 
-      {sideBarItems.recipee && (
-        <div className="create_recipe_main">
-          <div className="title_recipe">
-            <p>Create Recipe</p> <button className="btn-default">Save</button>
-          </div>
-          <div className="recipe_content">
-            <div className="general_info">
-              <h3>General Information</h3>
-              <div className="input-box">
-                <h4>Recipe Name</h4>
-                <input type="text" class="custom_input" />
-                <div className="drop-image">
-                  <img src={selectimage} />
-                  <div>
-                    <p>
-                      Drop your image here, or{" "}
-                      <span className="text-default">Browse</span>
-                    </p>
-                    <p className="small-text">Supports: JPG, GIF, PNG</p>
-                  </div>
-                </div>
-              </div>
-              <div className="serving-size">
-                <h3>Serving Size</h3>
-                <div className="serving-select">
-                  <select>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                  </select>
-                </div>
-              </div>
-              <div className="visibility">
-                <h3>Visibility</h3>
-                <select>
-                  <option>Select who can see this recipe</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                </select>
-              </div>
-              <div className="time">
-                <div className="prep">
-                  <h3>Prep Time</h3>
-                  <input
-                    type="number"
-                    id="quantity"
-                    name="quantity"
-                    min="1"
-                    max="700"
-                  />
-                </div>
-                <div className="cook">
-                  <h3>Cook Time</h3>
-                  <input
-                    type="number"
-                    id="quantity"
-                    name="quantity"
-                    min="1"
-                    max="700"
-                  />
-                </div>
-                <div className="tim">
-                  <h3>Total Time</h3>
-                  <span className="minutes">Minutes</span>
-                </div>
-              </div>
-              <div className="visibility">
-                <h3>Categoriess</h3>
-                <select>
-                  <option>Select a recipe category</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                </select>
-                <a href="#" className="add_cate">
-                  Add additional category
-                </a>
-              </div>
-            </div>
-            <div className="ingrediant">
-              <h3>Ingredients</h3>
-              {/* add integridient */}
-              <div className="add_ingredient">
-                <input type="text" class="custom_input" />
-                <div className="quantity">
-                  <input type="text" class="custom_input" />
-                  <select className="select_quantity">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                  </select>
-                </div>
-                <div className="btn">
-                  <button>Save</button>
-                  <a href="#" className="add_cate">
-                    Cancel
-                  </a>
-                </div>
-              </div>
-              {/* after addition */}
-              <div>
-                <div className="after_add">
-                  <div className="content">2tbps of oil</div>
-                  <div className="action">
-                    <a href="#" className="delete">
-                      <img src={del} />
-                    </a>
-                    <a href="#" className="edit">
-                      <img src={edit} />
-                    </a>
-                    <a href="#" className="shuffle">
-                      <img src={sort} />
-                    </a>
-                  </div>
-                </div>
-                <div className="after_add">
-                  <div className="content">2tbps of oil</div>
-                  <div className="action">
-                    <a href="#" className="delete">
-                      <img src={del} />
-                    </a>
-                    <a href="#" className="edit">
-                      <img src={edit} />
-                    </a>
-                    <a href="#" className="shuffle">
-                      <img src={sort} />
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <a href="#" className="add_cate">
-                Add Ingredients
-              </a>
-            </div>
-            <div className="prepration">
-              <h3>Preparation</h3>
-              <div className="prepration-step">
-                <h4>Step 1</h4>
-                <textarea>
-                  Heat your wok over high heat, and add the oil. Sear the beef
-                  until just browned, remove from the wok, and set aside.
-                </textarea>
-
-                <div className="btn">
-                  <button>Save</button>
-                  <a href="#" className="add_cate">
-                    Cancel
-                  </a>
-                </div>
-              </div>
-              {/* after add step */}
-              <div className="prepration-step ">
-                <h4>Step 1</h4>
-                <div className="edit">
-                  <textarea>
-                    Heat your wok over high heat, and add the oil. Sear the beef
-                    until just browned, remove from the wok, and set aside.
-                  </textarea>
-                  <div className="action">
-                    <a href="#" className="delete">
-                      <img src={del} />
-                    </a>
-                    <a href="#" className="edit">
-                      <img src={edit} />
-                    </a>
-                    <a href="#" className="shuffle">
-                      <img src={sort} />
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <a href="#" className="add_cate">
-                Add Preparation Step
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
+      {sideBarItems.recipee && <CreateRecipee />}
     </div>
   );
 };
