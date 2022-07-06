@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import "./createRecipee.style.scss";
-import selectimage from "../../assets/food/upload.png";
 import del from "../../assets/food/delete.png";
 import edit from "../../assets/food/edit.png";
 import sort from "../../assets/food/sort.png";
 import DropDown from "../drop-down/DropDown";
-import { id } from "date-fns/locale";
+import DragnDrop from "../drag-and-drop/DragnDrop";
+import selectimage from "../../assets/food/upload.png";
+
 const CreateRecipee = () => {
+  const [files, setFiles] = useState([]);
   const [addIngOpen, setAddIngOpen] = useState(false);
   const [preprationStep, setPreprationStep] = useState(false);
+  const [stepCount, setStepCount] = useState(1);
   const [ingInfo, setIngInfo] = useState({
     ingredient: "",
     quantity: "",
@@ -19,11 +22,12 @@ const CreateRecipee = () => {
   const addIngredient = () => {
     setAddIngOpen(true);
   };
-  let [arr, setArr] = useState([]);
+  let [ingArr, setIngArr] = useState([]);
   let [preArr, setPreArr] = useState([]);
 
   const saveIngredient = () => {
-    setArr([...arr, ingInfo]);
+    let id = Date.now();
+    setIngArr([...ingArr, {id:id,...ingInfo}]);
     setIngInfo({
       ingredient: "",
       quantity: "",
@@ -42,11 +46,38 @@ const CreateRecipee = () => {
   };
 
   const savePrepration = () => {
+    let step = stepCount;
+    setStepCount((p) => stepCount + 1);
     setPreprationStep(false);
     let id = Date.now();
-    setPreArr([...preArr, { id: id, info: pStepInfo }]);
+    setPreArr([...preArr, { id: id, info: pStepInfo, step: step }]);
     setPStepInfo("");
   };
+
+  const deltePrepration = (id) => {
+    let filterPre = preArr.filter((val) => val.id !== id);
+    setPreArr(filterPre);
+
+  }
+
+  const deleteIng = (id) => {
+    let filterIng = ingArr.filter(val => val.id !== id);
+    setIngArr(filterIng)
+  }
+
+  let categoryList = [
+    "World Cuisine",
+    "Healthy Recipes",
+    "Dinner",
+    "Lunch",
+    "Breakfast",
+    "Salads",
+    "Side Dishes",
+    "Soup",
+    "Stew & Chili Recipies",
+    "Appetizers & Snacks",
+    "Desserts",
+  ];
 
   return (
     <>
@@ -61,14 +92,8 @@ const CreateRecipee = () => {
               <h4>Recipe Name</h4>
               <input type="text" className="custom_input" />
               <div className="drop-image">
-                <img src={selectimage} />
-                <div>
-                  <p>
-                    Drop your image here, or{" "}
-                    <span className="text-default">Browse</span>
-                  </p>
-                  <p className="small-text">Supports: JPG, GIF, PNG</p>
-                </div>
+                {files.length == 0 && <img src={selectimage} />}
+                <DragnDrop files={files} setFiles={setFiles} />
               </div>
             </div>
             <div className="serving-size">
@@ -119,12 +144,8 @@ const CreateRecipee = () => {
             </div>
             <div className="visibility">
               <h3>Categoriess</h3>
-              <select>
-                <option>Select a recipe category</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-              </select>
+              <DropDown options={categoryList} />
+
               <a href="#" className="add_cate">
                 Add additional category
               </a>
@@ -163,29 +184,32 @@ const CreateRecipee = () => {
                 </div>
                 <div className="btn">
                   <button onClick={saveIngredient}>Save</button>
-                  <span className="add_cate" onClick={()=> setAddIngOpen(false)}>
+                  <span
+                    className="add_cate"
+                    onClick={() => setAddIngOpen(false)}
+                  >
                     Cancel
                   </span>
                 </div>
               </div>
             )}
             {/* after addition */}
-            {arr?.map((val) => (
-              <div>
+            {ingArr?.map((val) => (
+              <div key={val.id}>
                 <div className="after_add">
                   <div className="content">
                     {val.quantity} {val.ingredient} {val.qType}
                   </div>
                   <div className="action">
-                    <a href="#" className="delete">
+                    <span className="delete" onClick={() => deleteIng(val.id)}>
                       <img src={del} />
-                    </a>
-                    <a href="#" className="edit">
+                    </span>
+                    <span className="edit">
                       <img src={edit} />
-                    </a>
-                    <a href="#" className="shuffle">
+                    </span>
+                    <span className="shuffle">
                       <img src={sort} />
-                    </a>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -200,33 +224,36 @@ const CreateRecipee = () => {
             {/* after add step */}
             {preArr?.map((res) => (
               <div className="prepration-step " key={res.id}>
-                <h4>Step 1</h4>
+                <h4>Step {res.step}</h4>
                 <div className="edit">
                   <textarea>{res.info}</textarea>
                   <div className="action">
-                    <a href="#" className="delete">
+                    <span className="delete" onClick={() => deltePrepration(res.id)}>
                       <img src={del} />
-                    </a>
-                    <a href="#" className="edit">
+                    </span>
+                    <span className="edit">
                       <img src={edit} />
-                    </a>
-                    <a href="#" className="shuffle">
+                    </span>
+                    <span className="shuffle">
                       <img src={sort} />
-                    </a>
+                    </span>
                   </div>
                 </div>
               </div>
             ))}
             {preprationStep && (
               <div className="prepration-step">
-                <h4>Step 1</h4>
+                <h4>Step {stepCount}</h4>
                 <textarea
                   value={pStepInfo}
                   onChange={(e) => setPStepInfo(e.target.value)}
                 />
                 <div className="btn">
                   <button onClick={savePrepration}>Save</button>
-                  <span className="add_cate" onClick={() =>  setPreprationStep(false)}>
+                  <span
+                    className="add_cate"
+                    onClick={() => setPreprationStep(false)}
+                  >
                     Cancel
                   </span>
                 </div>

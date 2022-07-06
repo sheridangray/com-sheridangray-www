@@ -264,7 +264,7 @@
             display: flex;
             justify-content: flex-end;
             gap: 10px;
-            a {
+            span {
               display: flex;
               width: 32px;
               height: 32px;
@@ -319,7 +319,7 @@
               display: flex;
               justify-content: flex-end;
               gap: 4px;
-              a {
+              a, span {
                 display: flex;
                 width: 32px;
                 height: 32px;
