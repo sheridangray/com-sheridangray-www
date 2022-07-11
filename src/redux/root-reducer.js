@@ -4,6 +4,7 @@ import storage from 'redux-persist/lib/storage';
 
 import userReducer from './user/user.reducer';
 import profileMenuReducer from "./profile-menu/profile-menu.reducer"
+import recipeReducer from './recipie-sagas/recipe.reducer';
 
 const persistConfig = {
   key: 'root',
@@ -13,7 +14,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   user: userReducer,
-  profileMenu: profileMenuReducer
+  profileMenu: profileMenuReducer,
+  recipe: recipeReducer
 });
 
 export default persistReducer(persistConfig, rootReducer);

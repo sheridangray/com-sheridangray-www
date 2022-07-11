@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./createRecipee.style.scss";
 import del from "../../assets/food/delete.png";
 import edit from "../../assets/food/edit.png";
@@ -6,6 +6,9 @@ import sort from "../../assets/food/sort.png";
 import DropDown from "../drop-down/DropDown";
 import DragnDrop from "../drag-and-drop/DragnDrop";
 import selectimage from "../../assets/food/upload.png";
+import { useDispatch } from "react-redux";
+import { getCategoryList } from "../../redux/recipie-sagas/recipe.actions";
+import { useSelector } from "react-redux";
 
 const CreateRecipee = () => {
   const [files, setFiles] = useState([]);
@@ -17,6 +20,7 @@ const CreateRecipee = () => {
     quantity: "",
     qType: "",
   });
+  const [selected, setSelected] = useState();
 
   const [pStepInfo, setPStepInfo] = useState("");
   const addIngredient = () => {
@@ -27,7 +31,7 @@ const CreateRecipee = () => {
 
   const saveIngredient = () => {
     let id = Date.now();
-    setIngArr([...ingArr, {id:id,...ingInfo}]);
+    setIngArr([...ingArr, { id: id, ...ingInfo }]);
     setIngInfo({
       ingredient: "",
       quantity: "",
@@ -57,27 +61,27 @@ const CreateRecipee = () => {
   const deltePrepration = (id) => {
     let filterPre = preArr.filter((val) => val.id !== id);
     setPreArr(filterPre);
-
-  }
+  };
 
   const deleteIng = (id) => {
-    let filterIng = ingArr.filter(val => val.id !== id);
-    setIngArr(filterIng)
-  }
+    let filterIng = ingArr.filter((val) => val.id !== id);
+    setIngArr(filterIng);
+  };
 
-  let categoryList = [
-    "World Cuisine",
-    "Healthy Recipes",
-    "Dinner",
-    "Lunch",
-    "Breakfast",
-    "Salads",
-    "Side Dishes",
-    "Soup",
-    "Stew & Chili Recipies",
-    "Appetizers & Snacks",
-    "Desserts",
-  ];
+  const handleCategories = (event) => {
+    setSelected(event.target.value);
+  };
+
+  const dispatch = useDispatch();
+  const {
+    recipe: { categoriesList },
+  } = useSelector((state) => {
+    return state;
+  });
+
+  useEffect(() => {
+    dispatch(getCategoryList());
+  }, [dispatch]);
 
   return (
     <>
@@ -144,7 +148,11 @@ const CreateRecipee = () => {
             </div>
             <div className="visibility">
               <h3>Categoriess</h3>
-              <DropDown options={categoryList} />
+              <DropDown
+                options={categoriesList}
+                handleChange={handleCategories}
+                selected={selected}
+              />
 
               <a href="#" className="add_cate">
                 Add additional category
@@ -228,7 +236,10 @@ const CreateRecipee = () => {
                 <div className="edit">
                   <textarea>{res.info}</textarea>
                   <div className="action">
-                    <span className="delete" onClick={() => deltePrepration(res.id)}>
+                    <span
+                      className="delete"
+                      onClick={() => deltePrepration(res.id)}
+                    >
                       <img src={del} />
                     </span>
                     <span className="edit">
