@@ -11,6 +11,11 @@ export const getCategoryListSuccess = (data) => ({
     payload:data
 });
 
+export const addRecipe =(data) => ({
+    type: RecipeActionTypes.ADD_RECIPE,
+    payload:data
+})
+
 // export const getFamilyMembersSuccess = (data) => ({
 //     type: MemberActionTypes.GET_MEMBER_LIST_SUCCESS,
 //     payload:data,

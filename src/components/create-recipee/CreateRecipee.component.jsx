@@ -7,10 +7,16 @@ import DropDown from "../drop-down/DropDown";
 import DragnDrop from "../drag-and-drop/DragnDrop";
 import selectimage from "../../assets/food/upload.png";
 import { useDispatch } from "react-redux";
-import { getCategoryList } from "../../redux/recipie-sagas/recipe.actions";
+import {
+  addRecipe,
+  getCategoryList,
+} from "../../redux/recipie-sagas/recipe.actions";
 import { useSelector } from "react-redux";
+import { qTypeArr, servingArr } from "../../data/staticData";
+import { BASE_URI } from "../../Api/api";
 
 const CreateRecipee = () => {
+  const [recipeName, setRecipeName] = useState("");
   const [files, setFiles] = useState([]);
   const [addIngOpen, setAddIngOpen] = useState(false);
   const [preprationStep, setPreprationStep] = useState(false);
@@ -20,14 +26,25 @@ const CreateRecipee = () => {
     quantity: "",
     qType: "",
   });
-  const [selected, setSelected] = useState();
-
+  const [categorySelected, setCategorySelected] = useState();
+  const [cookingTime, setCookingTime] = useState({
+    prepTime: 0,
+    cookTime: 0,
+  });
+  const [servingSize, setServingSize] = useState();
   const [pStepInfo, setPStepInfo] = useState("");
+  let [ingArr, setIngArr] = useState([]);
+  let [preArr, setPreArr] = useState([]);
+
+  const handleCookingTime = (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+    setCookingTime({ ...cookingTime, [name]: value });
+  };
+
   const addIngredient = () => {
     setAddIngOpen(true);
   };
-  let [ingArr, setIngArr] = useState([]);
-  let [preArr, setPreArr] = useState([]);
 
   const saveIngredient = () => {
     let id = Date.now();
@@ -69,7 +86,49 @@ const CreateRecipee = () => {
   };
 
   const handleCategories = (event) => {
-    setSelected(event.target.value);
+    setCategorySelected(event.target.value);
+  };
+
+  const handleServingSize = (event) => {
+    setServingSize(event.target.value);
+  };
+
+  const saveFormData = async () => {
+    let ingredientArray = ingArr.map((val) => {
+      return {
+        ingredient: val.ingredient,
+        quantity: Number(val.quantity),
+        qType: val.qType,
+      };
+    });
+    let preprationArray = preArr.map((val) => {
+      return {
+        info: val.info,
+        step: val.step,
+      };
+    });
+    const formData = {
+      name: recipeName,
+      ingredients: ingredientArray,
+      preparation: preprationArray,
+      servingSize: Number(servingSize),
+      prepTime: cookingTime.prepTime,
+      cookTime: cookingTime.cookTime,
+      totalTime:
+        (parseInt(cookingTime.prepTime) || 0) +
+        (parseInt(cookingTime.cookTime) || 0).toString(),
+      categories: [categorySelected],
+    };
+    console.log(formData);
+    const res = await fetch(`${BASE_URI}/recipe`, {
+      method: "POST",
+      headers:{
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData),
+    });
+    const result = await res.json();
+    console.log(result);
   };
 
   const dispatch = useDispatch();
@@ -87,14 +146,22 @@ const CreateRecipee = () => {
     <>
       <div className="create_recipe_main">
         <div className="title_recipe">
-          <p>Create Recipe</p> <button className="btn-default">Save</button>
+          <p>Create Recipe</p>{" "}
+          <button className="btn-default" onClick={() => saveFormData()}>
+            Save
+          </button>
         </div>
         <div className="recipe_content">
           <div className="general_info">
             <h3>General Information</h3>
             <div className="input-box">
               <h4>Recipe Name</h4>
-              <input type="text" className="custom_input" />
+              <input
+                type="text"
+                className="custom_input"
+                value={recipeName}
+                onChange={(e) => setRecipeName(e.target.value)}
+              />
               <div className="drop-image">
                 {files.length == 0 && <img src={selectimage} />}
                 <DragnDrop files={files} setFiles={setFiles} />
@@ -103,12 +170,11 @@ const CreateRecipee = () => {
             <div className="serving-size">
               <h3>Serving Size</h3>
               <div className="serving-select">
-                <select>
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                </select>
+                <DropDown
+                  options={servingArr}
+                  handleChange={handleServingSize}
+                  selected={servingSize}
+                />
               </div>
             </div>
             <div className="visibility">
@@ -125,25 +191,29 @@ const CreateRecipee = () => {
                 <h3>Prep Time</h3>
                 <input
                   type="number"
-                  id="quantity"
-                  name="quantity"
+                  name="prepTime"
                   min="1"
-                  max="700"
+                  value={cookingTime.prepTime}
+                  onChange={handleCookingTime}
                 />
               </div>
               <div className="cook">
                 <h3>Cook Time</h3>
                 <input
                   type="number"
-                  id="quantity"
-                  name="quantity"
+                  name="cookTime"
                   min="1"
-                  max="700"
+                  value={cookingTime.cookTime}
+                  onChange={handleCookingTime}
                 />
               </div>
               <div className="tim">
                 <h3>Total Time</h3>
-                <span className="minutes">Minutes</span>
+                <span className="minutes">
+                  {(parseInt(cookingTime.prepTime) || 0) +
+                    (parseInt(cookingTime.cookTime) || 0)}{" "}
+                  Minutes
+                </span>
               </div>
             </div>
             <div className="visibility">
@@ -151,7 +221,7 @@ const CreateRecipee = () => {
               <DropDown
                 options={categoriesList}
                 handleChange={handleCategories}
-                selected={selected}
+                selected={categorySelected}
               />
 
               <a href="#" className="add_cate">
@@ -185,7 +255,7 @@ const CreateRecipee = () => {
 
                   <DropDown
                     handleChange={handleChange}
-                    options={["Quantity Type", 1, 2, 3, 4]}
+                    options={qTypeArr}
                     className="select_quantity"
                     name="qType"
                   />
