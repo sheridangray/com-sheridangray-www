@@ -1,9 +1,9 @@
 import React from "react";
 
-const DropDown = ({handleChange,options, className, name, selected }) => {
+const DropDown = ({handleChange,options, className, name, selected}) => {
   return (
     <>
-      <select onChange={handleChange} className={className} name={name} value={selected}>
+      <select onChange={handleChange} className={className} name={name} value={selected} defaultValue={options[0]}>
         {options.map((item) => (
           
           <option key={item._id} value={item._id}>

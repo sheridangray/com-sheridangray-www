@@ -17,7 +17,7 @@ import { BASE_URI } from "../../Api/api";
 
 const CreateRecipee = () => {
   const [recipeName, setRecipeName] = useState("");
-  const [files, setFiles] = useState([]);
+  const [imgfiles, setFiles] = useState([]);
   const [addIngOpen, setAddIngOpen] = useState(false);
   const [preprationStep, setPreprationStep] = useState(false);
   const [stepCount, setStepCount] = useState(1);
@@ -94,6 +94,20 @@ const CreateRecipee = () => {
   };
 
   const saveFormData = async () => {
+    //Upload Image
+    const data = new FormData();
+    data.append("image",imgfiles[0], imgfiles[0].name);
+
+    let requestOptions = {
+      method: 'POST',
+      body: data,
+      redirect: 'follow'
+    };
+    
+    const imgResult = await fetch(`${BASE_URI}/upload/image`, requestOptions);
+    const imgRes = await imgResult.json();
+    console.log(imgRes, "img res");
+
     let ingredientArray = ingArr.map((val) => {
       return {
         ingredient: val.ingredient,
@@ -111,15 +125,16 @@ const CreateRecipee = () => {
       name: recipeName,
       ingredients: ingredientArray,
       preparation: preprationArray,
-      servingSize: Number(servingSize),
-      prepTime: cookingTime.prepTime,
-      cookTime: cookingTime.cookTime,
+      servingSize: Number(servingSize) || 1,
+      prepTime: cookingTime.prepTime || 0,
+      cookTime: cookingTime.cookTime || 0,
       totalTime:
         (parseInt(cookingTime.prepTime) || 0) +
-        (parseInt(cookingTime.cookTime) || 0).toString(),
+        (parseInt(cookingTime.cookTime) || 0),
       categories: [categorySelected],
     };
     console.log(formData);
+
     const res = await fetch(`${BASE_URI}/recipe`, {
       method: "POST",
       headers:{
@@ -129,6 +144,7 @@ const CreateRecipee = () => {
     });
     const result = await res.json();
     console.log(result);
+    alert(result.statusMessage);
   };
 
   const dispatch = useDispatch();
@@ -163,8 +179,8 @@ const CreateRecipee = () => {
                 onChange={(e) => setRecipeName(e.target.value)}
               />
               <div className="drop-image">
-                {files.length == 0 && <img src={selectimage} />}
-                <DragnDrop files={files} setFiles={setFiles} />
+                {imgfiles.length == 0 && <img src={selectimage} />}
+                <DragnDrop files={imgfiles} setFiles={setFiles} />
               </div>
             </div>
             <div className="serving-size">
