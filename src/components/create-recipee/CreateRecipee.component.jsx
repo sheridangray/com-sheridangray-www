@@ -12,8 +12,9 @@ import {
   getCategoryList,
 } from "../../redux/recipie-sagas/recipe.actions";
 import { useSelector } from "react-redux";
-import { qTypeArr, servingArr } from "../../data/staticData";
+import { categoryOptions, qTypeArr, servingArr } from "../../data/staticData";
 import { BASE_URI } from "../../Api/api";
+import Multiselect from "multiselect-react-dropdown";
 
 const CreateRecipee = () => {
   const [recipeName, setRecipeName] = useState("");
@@ -58,6 +59,7 @@ const CreateRecipee = () => {
   };
 
   const handleChange = (e) => {
+    console.log(e);
     let name = e.target.name;
     setIngInfo({ ...ingInfo, [name]: e.target.value });
   };
@@ -85,8 +87,37 @@ const CreateRecipee = () => {
     setIngArr(filterIng);
   };
 
+  // For Editing Ingdritents
+  const [editIngClicked, isEditIngClicked] = useState(false);
+  const editIngArray = (val) => {
+    localStorage.setItem("id", val.id);
+    setIngInfo({
+      ingredient: val.ingredient,
+      quantity: val.quantity,
+      qType: val.qType,
+    });
+    // console.log(val);
+    isEditIngClicked(true);
+    setAddIngOpen(true);
+  };
+
+  const updateIngredient = () => {
+    let id = localStorage.getItem("id");
+    let findID = ingArr.find((e) => e.id == id);
+    findID.ingredient = ingInfo.ingredient;
+    findID.quantity = ingInfo.quantity;
+    findID.qType = ingInfo.qType;
+
+    console.log(findID, "findID");
+    
+    setIngArr((p) => p);
+  };
+
+  // Code ends here for edit ing
+
   const handleCategories = (event) => {
-    setCategorySelected(event.target.value);
+    console.log(event);
+    // setCategorySelected(event.target.value);
   };
 
   const handleServingSize = (event) => {
@@ -96,14 +127,14 @@ const CreateRecipee = () => {
   const saveFormData = async () => {
     //Upload Image
     const data = new FormData();
-    data.append("image",imgfiles[0], imgfiles[0].name);
+    data.append("image", imgfiles[0], imgfiles[0].name);
 
     let requestOptions = {
-      method: 'POST',
+      method: "POST",
       body: data,
-      redirect: 'follow'
+      redirect: "follow",
     };
-    
+
     const imgResult = await fetch(`${BASE_URI}/upload/image`, requestOptions);
     const imgRes = await imgResult.json();
     console.log(imgRes, "img res");
@@ -137,8 +168,8 @@ const CreateRecipee = () => {
 
     const res = await fetch(`${BASE_URI}/recipe`, {
       method: "POST",
-      headers:{
-        "Content-Type": "application/json"
+      headers: {
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     });
@@ -195,12 +226,25 @@ const CreateRecipee = () => {
             </div>
             <div className="visibility">
               <h3>Visibility</h3>
-              <select>
-                <option>Select who can see this recipe</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-              </select>
+              <Multiselect
+                displayValue="key"
+                placeholder="Select who can see this recipe"
+                onKeyPressFn={function noRefCheck() {}}
+                onRemove={function noRefCheck() {}}
+                onSearch={function noRefCheck() {}}
+                onSelect={function noRefCheck() {}}
+                options={[
+                  {
+                    cat: "Family",
+                    key: "Family",
+                  },
+                  {
+                    cat: "Public",
+                    key: "Public",
+                  },
+                ]}
+                singleSelect
+              />
             </div>
             <div className="time">
               <div className="prep">
@@ -234,10 +278,15 @@ const CreateRecipee = () => {
             </div>
             <div className="visibility">
               <h3>Categoriess</h3>
-              <DropDown
-                options={categoriesList}
-                handleChange={handleCategories}
-                selected={categorySelected}
+              <Multiselect
+                displayValue="key"
+                groupBy="cat"
+                onKeyPressFn={function noRefCheck() {}}
+                onRemove={function noRefCheck() {}}
+                onSearch={function noRefCheck() {}}
+                onSelect={(e) => handleCategories(e)}
+                singleSelect
+                options={categoryOptions}
               />
 
               <a href="#" className="add_cate">
@@ -268,7 +317,6 @@ const CreateRecipee = () => {
                     value={ingInfo.quantity}
                     onChange={handleChange}
                   />
-
                   <DropDown
                     handleChange={handleChange}
                     options={qTypeArr}
@@ -277,7 +325,11 @@ const CreateRecipee = () => {
                   />
                 </div>
                 <div className="btn">
-                  <button onClick={saveIngredient}>Save</button>
+                  {editIngClicked ? (
+                    <button onClick={updateIngredient}>Update</button>
+                  ) : (
+                    <button onClick={saveIngredient}>Save</button>
+                  )}
                   <span
                     className="add_cate"
                     onClick={() => setAddIngOpen(false)}
@@ -292,13 +344,13 @@ const CreateRecipee = () => {
               <div key={val.id}>
                 <div className="after_add">
                   <div className="content">
-                    {val.quantity} {val.ingredient} {val.qType}
+                    {val?.quantity} {val?.ingredient} {val?.qType}
                   </div>
                   <div className="action">
                     <span className="delete" onClick={() => deleteIng(val.id)}>
                       <img src={del} />
                     </span>
-                    <span className="edit">
+                    <span className="edit" onClick={() => editIngArray(val)}>
                       <img src={edit} />
                     </span>
                     <span className="shuffle">
