@@ -53,31 +53,43 @@ export const qTypeArr = [
 
 export const categoryOptions = [
   {
-    cat: "Breakfast",
-    key: "Option 1",
+    category: "Breakfast",
+    subCategory: "Option 1",
   },
   {
-    cat: "Breakfast",
-    key: "Option 2",
+    category: "Breakfast",
+    subCategory: "Option 2",
   },
   {
-    cat: "Breakfast",
-    key: "Option 3",
+    category: "Breakfast",
+    subCategory: "Option 3",
   },
   {
-    cat: "Group 2",
-    key: "Option 4",
+    category: "Group 2",
+    subCategory: "Option 4",
   },
   {
-    cat: "Group 2",
-    key: "Option 5",
+    category: "Group 2",
+    subCategory: "Option 5",
   },
   {
-    cat: "Group 2",
-    key: "Option 6",
+    category: "Group 3",
+    subCategory: "Option 6",
   },
   {
-    cat: "Group 2",
-    key: "Option 7",
+    category: "Group 3",
+    subCategory: "Option 7",
+  },
+  {
+    category: "Group 3",
+    subCategory: "Option 5",
+  },
+  {
+    category: "Group 3",
+    subCategory: "Option 6",
+  },
+  {
+    category: "Group 3",
+    subCategory: "Option 7",
   },
 ];

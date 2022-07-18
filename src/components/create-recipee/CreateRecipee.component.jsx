@@ -28,12 +28,15 @@ const CreateRecipee = () => {
     qType: "",
   });
   const [categorySelected, setCategorySelected] = useState();
+  const [additionalCategoryOpen, isAdditionalCateogry] = useState(false);
+
   const [cookingTime, setCookingTime] = useState({
     prepTime: 0,
     cookTime: 0,
   });
   const [servingSize, setServingSize] = useState();
   const [pStepInfo, setPStepInfo] = useState("");
+
   let [ingArr, setIngArr] = useState([]);
   let [preArr, setPreArr] = useState([]);
 
@@ -78,6 +81,8 @@ const CreateRecipee = () => {
   };
 
   const deltePrepration = (id) => {
+    setStepCount((p) => stepCount - 1);
+
     let filterPre = preArr.filter((val) => val.id !== id);
     setPreArr(filterPre);
   };
@@ -109,15 +114,36 @@ const CreateRecipee = () => {
     findID.qType = ingInfo.qType;
 
     console.log(findID, "findID");
-    
-    setIngArr((p) => p);
+
+    let updatedData = ingArr.map((v) => {
+      if (v.id == id) {
+        return {
+          id: id,
+          ingredient: ingInfo.ingredient,
+          quantity: ingInfo.quantity,
+          qType: ingInfo.qType,
+        };
+      } else {
+        return v;
+      }
+    });
+    console.log(updatedData);
+    setIngArr(updatedData);
+    setAddIngOpen(false);
+    isEditIngClicked(false);
+    setAddIngOpen(false);
+    setIngInfo({
+      ingredient: "",
+      quantity: "",
+      qType: "",
+    });
   };
 
   // Code ends here for edit ing
 
   const handleCategories = (event) => {
     console.log(event);
-    // setCategorySelected(event.target.value);
+    setCategorySelected(event[0]);
   };
 
   const handleServingSize = (event) => {
@@ -162,7 +188,8 @@ const CreateRecipee = () => {
       totalTime:
         (parseInt(cookingTime.prepTime) || 0) +
         (parseInt(cookingTime.cookTime) || 0),
-      categories: [categorySelected],
+      categories: [categorySelected.catId],
+      subCategory: categorySelected.subId,
     };
     console.log(formData);
 
@@ -185,6 +212,21 @@ const CreateRecipee = () => {
     return state;
   });
 
+  console.log(categoriesList);
+
+  let multiCategories = categoriesList
+    ?.map((outer) =>
+      outer.subCategoriesInfo?.map((inner) => {
+        return {
+          category: outer.name,
+          subCategory: inner.name,
+          catId: outer._id,
+          subId: inner._id,
+        };
+      })
+    )
+    .flat();
+
   useEffect(() => {
     dispatch(getCategoryList());
   }, [dispatch]);
@@ -194,7 +236,31 @@ const CreateRecipee = () => {
       <div className="create_recipe_main">
         <div className="title_recipe">
           <p>Create Recipe</p>{" "}
-          <button className="btn-default" onClick={() => saveFormData()}>
+          <button
+            className={
+              recipeName.length > 0 &&
+              ingArr.length > 0 &&
+              preArr.length > 0 &&
+              servingSize &&
+              cookingTime.prepTime &&
+              cookingTime.cookTime &&
+              categorySelected
+                ? "btn-default"
+                : "btn-disabled"
+            }
+            onClick={() => saveFormData()}
+            disabled={
+              recipeName.length > 0 &&
+              ingArr.length > 0 &&
+              preArr.length > 0 &&
+              servingSize &&
+              cookingTime.prepTime &&
+              cookingTime.cookTime &&
+              categorySelected
+                ? false
+                : true
+            }
+          >
             Save
           </button>
         </div>
@@ -279,19 +345,28 @@ const CreateRecipee = () => {
             <div className="visibility">
               <h3>Categoriess</h3>
               <Multiselect
-                displayValue="key"
-                groupBy="cat"
+                displayValue="subCategory"
+                groupBy="category"
                 onKeyPressFn={function noRefCheck() {}}
                 onRemove={function noRefCheck() {}}
                 onSearch={function noRefCheck() {}}
                 onSelect={(e) => handleCategories(e)}
                 singleSelect
-                options={categoryOptions}
+                options={multiCategories}
               />
-
-              <a href="#" className="add_cate">
+              <span
+                className="add_cate"
+                onClick={() => isAdditionalCateogry(true)}
+              >
                 Add additional category
-              </a>
+              </span>
+              {additionalCategoryOpen && (
+                <div>
+                  <input type="text" placeholder="create category" />
+                  <br />
+                  <input type="text" placeholder="create Subcategory" />
+                </div>
+              )}
             </div>
           </div>
           <div className="ingrediant">
@@ -328,7 +403,18 @@ const CreateRecipee = () => {
                   {editIngClicked ? (
                     <button onClick={updateIngredient}>Update</button>
                   ) : (
-                    <button onClick={saveIngredient}>Save</button>
+                    <button
+                      onClick={saveIngredient}
+                      disabled={
+                        ingInfo.ingredient.length > 0 &&
+                        ingInfo.quantity.length > 0 &&
+                        ingInfo.qType.length > 0
+                          ? false
+                          : true
+                      }
+                    >
+                      Save
+                    </button>
                   )}
                   <span
                     className="add_cate"
@@ -368,11 +454,11 @@ const CreateRecipee = () => {
             <h3>Preparation</h3>
 
             {/* after add step */}
-            {preArr?.map((res) => (
+            {preArr?.map((res, id) => (
               <div className="prepration-step " key={res.id}>
-                <h4>Step {res.step}</h4>
+                <h4>Step {id + 1} </h4>
                 <div className="edit">
-                  <textarea>{res.info}</textarea>
+                  <textarea disabled>{res.info}</textarea>
                   <div className="action">
                     <span
                       className="delete"
@@ -398,7 +484,12 @@ const CreateRecipee = () => {
                   onChange={(e) => setPStepInfo(e.target.value)}
                 />
                 <div className="btn">
-                  <button onClick={savePrepration}>Save</button>
+                  <button
+                    onClick={savePrepration}
+                    disabled={pStepInfo.length > 0 ? false : true}
+                  >
+                    Save
+                  </button>
                   <span
                     className="add_cate"
                     onClick={() => setPreprationStep(false)}
