@@ -26,10 +26,7 @@ import CalendarItems from "../../components/CalendarItems/CalendarItems";
 import CreateRecipee from "../../components/create-recipee/CreateRecipee.component";
 const FoodPage = () => {
   let today = startOfToday();
-
-  const [currentNum, setCurrentNum] = useState(new Date().getDate());
   const [modalView, setModalView] = useState(false);
-  let [selectedDay, setSelectedDay] = useState(today);
   let [currentWeek, setCurretWeek] = useState(today);
   const dayNum = getDay(today);
   const weekStart = startOfWeek(

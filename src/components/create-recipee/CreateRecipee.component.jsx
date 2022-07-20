@@ -18,10 +18,11 @@ import Multiselect from "multiselect-react-dropdown";
 
 const CreateRecipee = () => {
   const [recipeName, setRecipeName] = useState("");
+  const [visibility, setVisibility] = useState("");
   const [imgfiles, setFiles] = useState([]);
   const [addIngOpen, setAddIngOpen] = useState(false);
   const [preprationStep, setPreprationStep] = useState(false);
-  const [stepCount, setStepCount] = useState(1);
+  const [stepCount, setStepCount] = useState(0);
   const [ingInfo, setIngInfo] = useState({
     ingredient: "",
     quantity: "",
@@ -72,8 +73,10 @@ const CreateRecipee = () => {
   };
 
   const savePrepration = () => {
-    let step = stepCount;
-    setStepCount((p) => stepCount + 1);
+    let lastStep = preArr.length;
+    console.log({ lastStep });
+    let step = lastStep + 1;
+    setStepCount(step);
     setPreprationStep(false);
     let id = Date.now();
     setPreArr([...preArr, { id: id, info: pStepInfo, step: step }]);
@@ -138,8 +141,44 @@ const CreateRecipee = () => {
       qType: "",
     });
   };
+  const [isPreprationEdit, setPreprationEdit] = useState(false);
+  const editPrepration = (res) => {
+    localStorage.setItem("preId", res.id);
+    setPStepInfo(res.info);
+    setPreprationStep(true);
+    setPreprationEdit(true);
+  };
+  const updatePrepration = () => {
+    let id = localStorage.getItem("preId");
+    let findItem = preArr.find((item) => item.id == id);
+    findItem.info = pStepInfo;
+    console.log({ findItem }, { pStepInfo });
+
+    let updatedData = preArr.map((val) => {
+      if (val.id == id) {
+        return findItem;
+      } else {
+        return val;
+      }
+    });
+    console.log(updatedData, "asa");
+    setPreprationEdit(false);
+    setPreArr((p) => p.map(v => {
+      if (v.id === id) {
+        return { ...v, info: pStepInfo }
+      }
+      return v;
+    }));
+    setPreprationStep(false);
+    setPStepInfo("");
+  };
 
   // Code ends here for edit ing
+
+  const handleVisibility = (e) => {
+    console.log({ e });
+    setVisibility(e[0].key);
+  };
 
   const handleCategories = (event) => {
     console.log(event);
@@ -182,6 +221,7 @@ const CreateRecipee = () => {
       name: recipeName,
       ingredients: ingredientArray,
       preparation: preprationArray,
+      visibility: visibility,
       servingSize: Number(servingSize) || 1,
       prepTime: cookingTime.prepTime || 0,
       cookTime: cookingTime.cookTime || 0,
@@ -190,6 +230,7 @@ const CreateRecipee = () => {
         (parseInt(cookingTime.cookTime) || 0),
       categories: [categorySelected.catId],
       subCategory: categorySelected.subId,
+      image: imgRes.data,
     };
     console.log(formData);
 
@@ -298,7 +339,7 @@ const CreateRecipee = () => {
                 onKeyPressFn={function noRefCheck() {}}
                 onRemove={function noRefCheck() {}}
                 onSearch={function noRefCheck() {}}
-                onSelect={function noRefCheck() {}}
+                onSelect={(e) => handleVisibility(e)}
                 options={[
                   {
                     cat: "Family",
@@ -455,10 +496,10 @@ const CreateRecipee = () => {
 
             {/* after add step */}
             {preArr?.map((res, id) => (
-              <div className="prepration-step " key={res.id}>
+              <div className="prepration-step ">
                 <h4>Step {id + 1} </h4>
                 <div className="edit">
-                  <textarea disabled>{res.info}</textarea>
+                  <textarea value={res.info} />
                   <div className="action">
                     <span
                       className="delete"
@@ -467,7 +508,7 @@ const CreateRecipee = () => {
                       <img src={del} />
                     </span>
                     <span className="edit">
-                      <img src={edit} />
+                      <img src={edit} onClick={() => editPrepration(res)} />
                     </span>
                     <span className="shuffle">
                       <img src={sort} />
@@ -478,18 +519,29 @@ const CreateRecipee = () => {
             ))}
             {preprationStep && (
               <div className="prepration-step">
-                <h4>Step {stepCount}</h4>
+                {isPreprationEdit ? " " : <h4>Step {stepCount + 1}</h4>}
+
                 <textarea
                   value={pStepInfo}
                   onChange={(e) => setPStepInfo(e.target.value)}
                 />
                 <div className="btn">
-                  <button
-                    onClick={savePrepration}
-                    disabled={pStepInfo.length > 0 ? false : true}
-                  >
-                    Save
-                  </button>
+                  {isPreprationEdit ? (
+                    <button
+                      onClick={updatePrepration}
+                      // disabled={pStepInfo.length > 0 ? false : true}
+                    >
+                      Update
+                    </button>
+                  ) : (
+                    <button
+                      onClick={savePrepration}
+                      disabled={pStepInfo.length > 0 ? false : true}
+                    >
+                      Save
+                    </button>
+                  )}
+
                   <span
                     className="add_cate"
                     onClick={() => setPreprationStep(false)}
