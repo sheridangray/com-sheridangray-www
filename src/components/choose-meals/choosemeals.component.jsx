@@ -6,7 +6,8 @@ import plus from "../../assets/meals/plus.svg";
 import minus from "../../assets/meals/minus.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { getCategoryList } from "../../redux/recipie-sagas/recipe.actions";
-import {BASE_URI} from "../../Api/api"
+import { BASE_URI } from "../../Api/api";
+import Card from "../Card";
 const ChooseMealsPage = ({ setModalView }) => {
   const dispatch = useDispatch();
   const {
@@ -22,25 +23,31 @@ const ChooseMealsPage = ({ setModalView }) => {
   }, [dispatch]);
 
   const [navItems, setNavItems] = useState(1);
-  const [headerInfo,setHeaderInfo] = useState("");
+  const [headerInfo, setHeaderInfo] = useState("");
   const [subCategory, setSubCategory] = useState([]);
+  const [recpieDetail, recpieDetailOpen] = useState(false);
+  const [recipeData,setRecipeData] =useState([])
   const handleCategory = (tab) => {
     setNavItems(tab._id);
     setSubCategory(tab.subCategoriesInfo);
     setHeaderInfo(tab.name);
+    recpieDetailOpen(false);
   };
 
-  const getRecipeData = async(e) => {
+  const getRecipeData = async (e) => {
+    recpieDetailOpen(true);
     const id = e._id;
-    const data = await fetch(`${BASE_URI}/recipe/getSubCategoriesRecipes/${id}`,{
-      method:'POST'
-    });
+    const data = await fetch(
+      `${BASE_URI}/recipe/getSubCategoriesRecipes/${id}`,
+      {
+        method: "POST",
+      }
+    );
     const result = await data.json();
-    console.log({result});
+    console.log({ result });
+    setRecipeData(result?.data);
     // window.open(result.data[result.data.length -1].image, '_blank')
-
-
-  }
+  };
   const sideBarTabs = (e) => {};
   return (
     <div id="myModal" class="modal">
@@ -75,8 +82,8 @@ const ChooseMealsPage = ({ setModalView }) => {
           </div>
           <div className="choose_search_row">
             <div className="search_bar">
-            <h3> {navItems == 1 ? 'Search' : `${headerInfo} Recipies`} </h3>
-              
+              <h3> {navItems == 1 ? "Search" : `${headerInfo} Recipies`} </h3>
+
               <button onClick={() => setModalView(false)}>
                 <img src={close} />
               </button>
@@ -121,15 +128,24 @@ const ChooseMealsPage = ({ setModalView }) => {
                   </div>
                 </form>
               )}
-              <div className="recipee_order_list">
-                <ul>
-                  {subCategory?.map((e) => (
-                    <React.Fragment key={e._id}>
-                      <li onClick={()=>getRecipeData(e)}>{e.name}</li>
-                    </React.Fragment>
-                  ))}
-                </ul>
-              </div>
+              {recpieDetail ? (
+                <div className="card">
+                  {recipeData
+                    ?.map((e) => (
+                      <Card img={e.image} name={e.name}/>
+                    ))}
+                </div>
+              ) : (
+                <div className="recipee_order_list">
+                  <ul>
+                    {subCategory?.map((e) => (
+                      <React.Fragment key={e._id}>
+                        <li onClick={() => getRecipeData(e)}>{e.name}</li>
+                      </React.Fragment>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>
