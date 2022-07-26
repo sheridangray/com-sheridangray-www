@@ -6,6 +6,7 @@ import plus from "../../assets/meals/plus.svg";
 import minus from "../../assets/meals/minus.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { getCategoryList } from "../../redux/recipie-sagas/recipe.actions";
+import back from "../../assets/meals/back.svg";
 import { BASE_URI } from "../../Api/api";
 import Card from "../Card";
 const ChooseMealsPage = ({ setModalView }) => {
@@ -26,8 +27,10 @@ const ChooseMealsPage = ({ setModalView }) => {
   const [headerInfo, setHeaderInfo] = useState("");
   const [subCategory, setSubCategory] = useState([]);
   const [recpieDetail, recpieDetailOpen] = useState(false);
-  const [recipeData,setRecipeData] =useState([])
+  const [chooseClicked, setChooseClicked] = useState(false);
+  const [recipeData, setRecipeData] = useState([]);
   const handleCategory = (tab) => {
+    setChooseClicked(false);
     setNavItems(tab._id);
     setSubCategory(tab.subCategoriesInfo);
     setHeaderInfo(tab.name);
@@ -82,13 +85,28 @@ const ChooseMealsPage = ({ setModalView }) => {
           </div>
           <div className="choose_search_row">
             <div className="search_bar">
-              <h3> {navItems == 1 ? "Search" : `${headerInfo} Recipies`} </h3>
+              <div className="back_with_title">
+                {chooseClicked && (
+                  <span className="backto">
+                    <img src={back} onClick={()=> {recpieDetailOpen(false); setChooseClicked(false);}}/>
+                  </span>
+                )}
 
-              <button onClick={() => setModalView(false)}>
-                <img src={close} />
-              </button>
+                <h3> {navItems == 1 ? "Search" : `${headerInfo} Recipies`} </h3>
+              </div>
+
+              <div className="filter_with_search">
+                {chooseClicked && (
+                  <span className="search_filter">
+                    <input type="text" placeholder="Filter by Keyword"></input>
+                  </span>
+                )}
+                <button onClick={() => setModalView(false)}>
+                  <img src={close} />
+                </button>
+              </div>
             </div>
-            <div className="recipee_meal">
+            <div className="recipee_meal meals_day">
               {navItems == 1 && (
                 <form>
                   <div className="input_meal">
@@ -130,17 +148,23 @@ const ChooseMealsPage = ({ setModalView }) => {
               )}
               {recpieDetail ? (
                 <div className="card">
-                  {recipeData
-                    ?.map((e) => (
-                      <Card img={e.image} name={e.name}/>
-                    ))}
+                  {recipeData?.map((e) => (
+                    <Card img={e.image} name={e.name} />
+                  ))}
                 </div>
               ) : (
                 <div className="recipee_order_list">
                   <ul>
                     {subCategory?.map((e) => (
                       <React.Fragment key={e._id}>
-                        <li onClick={() => getRecipeData(e)}>{e.name}</li>
+                        <li
+                          onClick={() => {
+                            getRecipeData(e);
+                            setChooseClicked(true);
+                          }}
+                        >
+                          {e.name}
+                        </li>
                       </React.Fragment>
                     ))}
                   </ul>

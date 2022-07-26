@@ -9,7 +9,7 @@ const Card = ({img,name}) => {
       <h4 className="dishname">{name}</h4>
       <div className="swap_rate">
         {/* <span>Swap</span> */}
-        <span>Choose</span>
+        <span> Choose</span>
         {/* <span>Rate</span> */}
       </div>
     </div>

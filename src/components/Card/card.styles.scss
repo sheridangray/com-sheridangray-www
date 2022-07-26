@@ -1,18 +1,56 @@
+.meals_day {
+  margin-top: 40px;
+  max-width: 100% !important;
 
+  .card {
+    text-align: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 30px 20px;
 
-  .card-inner {
-    // image{
-    //   vertical-align: middle;
-    // // max-width: 100%;
-    // width: 230px;
-    // border-top-left-radius: 5px;
-    // border-top-right-radius: 5px;
-    // // width: 50%;
-    // }
-    filter: drop-shadow(0px 2px 8px rgba(0, 0, 0, 0.2));
-    border-radius: 5px;
-    background: #fff;
-    padding: 16px;
-	  height: 250px;
-	  margin: 5px;
+    .card-inner {
+      box-shadow: 0px 2px 8px rgb(0 0 0 / 20%);
+      border-radius: 5px;
+    }
+
+    img {
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      width: 100%;
+      vertical-align: middle;
+    }
+    h4 {
+      padding: 20px 0;
+      font-weight: 800;
+      font-size: 16px;
+      line-height: 24px;
+      text-transform: capitalize;
+      color: rgba(0, 0, 0, 0.87);
+      background: #f8f9fc;
+      margin-bottom: 10px;
+    }
+    span {
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 20px;
+      color: #1f51e5;
+      display: inline-block;
+      padding: 10px 0;
+      cursor: pointer;
+    }
   }
+}
+.search_filter {
+  input {
+    font-size: 14px;
+    width: 250px;
+    height: 40px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    padding: 10px 0px 10px 8px;
+    &:focus {
+      outline: none;
+    }
+  }
+}

@@ -24,6 +24,7 @@ import {
 import startOfWeek from "date-fns/startOfWeek";
 import CalendarItems from "../../components/CalendarItems/CalendarItems";
 import CreateRecipee from "../../components/create-recipee/CreateRecipee.component";
+import AllRecipes from "../allRecipies/AllRecipes";
 const FoodPage = () => {
   let today = startOfToday();
   const [modalView, setModalView] = useState(false);
@@ -244,8 +245,8 @@ const FoodPage = () => {
           </div>
         </div>
       )}
-
-      {sideBarItems.recipee && <CreateRecipee />}
+{/* <CreateRecipee /> */}
+      {sideBarItems.recipee && <AllRecipes />}
     </div>
   );
 };
