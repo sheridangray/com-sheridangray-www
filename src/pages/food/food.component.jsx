@@ -73,91 +73,56 @@ const FoodPage = () => {
     );
   };
 
-  const [sideBarItems, setSideBarItems] = useState({
-    recipee: false,
-    meal: true,
-  });
-
   return (
-    <div className="meal_plan_row">
-      <div className="recipee_sidebar">
-        <h3>Food</h3>
-        <ul>
-          <li
-            id="1"
-            onClick={() =>
-              setSideBarItems({
-                meal: false,
-                recipee: true,
-              })
-            }
-            className={sideBarItems.recipee ? "active" : ""}
-          >
-            <img src={recipee} /> Recipies
-          </li>
-          <li
-            onClick={() =>
-              setSideBarItems({
-                meal: true,
-                recipee: false,
-              })
-            }
-            className={sideBarItems.meal ? "active" : ""}
-          >
-            <img src={meal} /> Meal Planner
-          </li>
-        </ul>
-      </div>
-
-      {sideBarItems.meal && (
-        <div className="meal_planner_col">
-          <div className="meal_planner_row">
-            <div className="meals_today">
-              <h4>Meal Planner</h4>
-              <button onClick={() => showTodayWeek()}>Today</button>
-              <div className="arrows">
-                <button onClick={previousWeek}>
-                  <img src={arrow} />
-                </button>
-                <button onClick={nextWeek}>
-                  <img src={rightarrow} />
-                </button>
-              </div>
-              <span className="time_between">
-                {format(weekStart, "MMMM d")} -{" "}
-                {format(weekStart, "MMMM") !== format(weekEnd, "MMMM")
-                  ? format(weekEnd, "MMMM d")
-                  : format(weekEnd, "d")}
-              </span>
+    <div>
+      <div className="meal_planner_col">
+        <div className="meal_planner_row">
+          <div className="meals_today">
+            <h4>Meal Planner</h4>
+            <button onClick={() => showTodayWeek()}>Today</button>
+            <div className="arrows">
+              <button onClick={previousWeek}>
+                <img src={arrow} />
+              </button>
+              <button onClick={nextWeek}>
+                <img src={rightarrow} />
+              </button>
             </div>
-            <div className="lunch_type">
-              {mealCategory.map((el, i) => (
-                <label>
-                  <input
-                    type="radio"
-                    name="food"
-                    value={el.type}
-                    checked={el.checked}
-                    onChange={(e) => handleChekBox(e, el.checked)}
-                  ></input>
-                  <span></span>
-                  {el.type}
-                </label>
-              ))}
-            </div>
+            <span className="time_between">
+              {format(weekStart, "MMMM d")} -{" "}
+              {format(weekStart, "MMMM") !== format(weekEnd, "MMMM")
+                ? format(weekEnd, "MMMM d")
+                : format(weekEnd, "d")}
+            </span>
           </div>
-          <div className="mealsday_row">
-            {days.map((day) => (
-              <CalendarItems
-                mealDay={format(new Date(day), "EEEE")}
-                mealDate={format(day, "d")}
-                setModalView={setModalView}
-              />
+          <div className="lunch_type">
+            {mealCategory.map((el, i) => (
+              <label>
+                <input
+                  type="radio"
+                  name="food"
+                  value={el.type}
+                  checked={el.checked}
+                  onChange={(e) => handleChekBox(e, el.checked)}
+                ></input>
+                <span></span>
+                {el.type}
+              </label>
             ))}
+          </div>
+        </div>
+        <div className="mealsday_row">
+          {days.map((day) => (
+            <CalendarItems
+              mealDay={format(new Date(day), "EEEE")}
+              mealDate={format(day, "d")}
+              setModalView={setModalView}
+            />
+          ))}
 
-            {modalView && <ChooseMealsPage setModalView={setModalView} />}
+          {modalView && <ChooseMealsPage setModalView={setModalView} />}
 
-            {/* <div className="meals_col">
+          {/* <div className="meals_col">
             <h6 className="meal_day">SAT</h6>
             <h5 className="meals_date">18</h5>
             <div className="dish_with_swap">
@@ -242,11 +207,9 @@ const FoodPage = () => {
               </div>
             </div>
           </div>*/}
-          </div>
         </div>
-      )}
-{/* <CreateRecipee /> */}
-      {sideBarItems.recipee && <AllRecipes />}
+      </div>
+      {/* <CreateRecipee /> */}
     </div>
   );
 };

@@ -19,10 +19,14 @@ import { checkUserSession } from "./redux/user/user.actions";
 import "./App.scss";
 import MoneyPage from "./pages/money/money.component";
 import SettingPage from "./pages/setting/setting.component";
+import Layout from "./layout/Layout";
+import AllRecipes from "./pages/allRecipies/AllRecipes";
+import CreateRecipee from "./components/create-recipee/CreateRecipee.component";
+import RecipeDetail from "./pages/allRecipies/RecipeDetail";
 
 function App() {
   const currentUser = useSelector(selectCurrentUser);
-  
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -73,7 +77,11 @@ function App() {
           exact
           path="/food"
           activeClassName="active"
-          element={<FoodPage />}
+          element={
+            <Layout>
+              <FoodPage />
+            </Layout>
+          }
         />
         <Route
           exact
@@ -86,6 +94,37 @@ function App() {
           path="/setting"
           activeClassName="active"
           element={<SettingPage />}
+        />
+
+        <Route
+          exact
+          path="/food/recipies/create"
+          activeClassName="active"
+          element={
+            <Layout>
+              <CreateRecipee />
+            </Layout>
+          }
+        />
+        <Route
+          exact
+          path="/food/recipies"
+          activeClassName="active"
+          element={
+            <Layout>
+              <AllRecipes />
+            </Layout>
+          }
+        />
+        <Route
+          exact
+          path="/food/recipies/1"
+          activeClassName="active"
+          element={
+            <Layout>
+              <RecipeDetail />
+            </Layout>
+          }
         />
       </Routes>
     </div>
