@@ -13,8 +13,25 @@ import curry from "./imges/curry.png";
 import "./allRecipes.style.scss";
 import CreateRecipee from "../../components/create-recipee/CreateRecipee.component";
 import { useNavigate } from "react-router";
+import { useEffect } from "react";
+import { BASE_URI } from "../../Api/api";
 function AllRecipes() {
   let navigate = useNavigate();
+  const [data, setData] = useState([]);
+
+  const getAllRecipes = async () => {
+    try {
+      const res = await fetch(`${BASE_URI}/recipe/`); //localhost:8080/recipe
+      const result = await res.json();
+      console.log(result);
+      setData(result.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getAllRecipes();
+  }, []);
 
   return (
     <div className="meal_planner_col">
@@ -30,32 +47,33 @@ function AllRecipes() {
             </button>
           </div>
           <div className="recipee_tab">
-            <button onClick={() => navigate("/food/recipies/create")}>
+            <button onClick={() => navigate(`/food/recipies/create`)}>
               Create Recipie
             </button>
           </div>
         </div>
       </div>
 
-      <div className="all_recippe_rows">
-        {Array(9)
-          .fill()
-          .map((e) => (
-            <div className="all_recipee_col" onClick={()=> navigate("/food/recipies/1")}>
-              <img src={turkey} />
-              <h4>Turkey, Corn, & Sun-dried Tomato Wraps</h4>
-              <div className="star_rating">
-                <span>
-                  <img src={star} />
-                  <img src={star} />
-                  <img src={star} />
-                  <img src={halfstar} />
-                  <img src={halfstar} />
-                </span>
-                <span>128 reviews</span>
-              </div>
+      <div className="all_recippe_rows all_recipe_main">
+        {data?.map((e) => (
+          <div
+            className="all_recipee_col"
+            onClick={() => navigate(`/food/recipies/${e._id}`)}
+          >
+            <img src={e.image} alt="No Image Found" />
+            <h4>{e.name}</h4>
+            <div className="star_rating">
+              <span>
+                <img src={star} />
+                <img src={star} />
+                <img src={star} />
+                <img src={halfstar} />
+                <img src={halfstar} />
+              </span>
+              <span>128 reviews</span>
             </div>
-          ))}
+          </div>
+        ))}
       </div>
     </div>
   );

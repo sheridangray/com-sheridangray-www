@@ -1,0 +1,26 @@
+[33m833ccf5[m[33m ([m[1;36mHEAD -> [m[1;32mdev[m[33m, [m[1;31morigin/dev[m[33m)[m Latest work
+[33me9bc670[m[33m ([m[1;31morigin/feature/New-pages[m[33m, [m[1;32mfeature/New-pages[m[33m)[m routes created for food and recipe detail page
+[33mdb70db7[m open subcategory data and new all repipiee page created
+[33m8f30eb5[m[33m ([m[1;31morigin/design-fix/Create-Recipies[m[33m)[m card created for displaying recipe
+[33m99c7a76[m category and subcategory implemented in calendar modal
+[33mceea806[m multi-level api integrated, css issues fixed
+[33mec87563[m design issue on form
+[33m6352d6b[m[33m ([m[1;31morigin/feature/Create-Recipies[m[33m)[m image api uploaded
+[33m60d1416[m recipe api integration
+[33mc181e8a[m Category api implemented
+[33m6fddea3[m Drag and drop image implented, delete ingridient
+[33m00c5d0f[m adding functionality in reciepe page
+[33m08f883a[m feature/page design implemented
+[33mb064e18[m[33m ([m[1;31morigin/feature/meal-page[m[33m)[m weekly calendar implemented
+[33m9775d62[m calendar component creation and some style changes
+[33m421e65d[m meal page design implementation
+[33m31ef3c5[m[33m ([m[1;31morigin/feature/setting-page[m[33m)[m setting page design implemented
+[33m95e1a80[m[33m ([m[1;31morigin/Ticket-Home-LoggedOut[m[33m)[m Authentication logic and warning popup implemented
+[33m718094d[m design issue fixed
+[33ma5265ee[m Header design fixed, Login link in homepage
+[33m08647d0[m random header changes + pictures
+[33m42a4337[m lots of random stuff
+[33m2ee68ce[m Updated hompage and added images
+[33m94c1922[m Removed Instacart HTML from assets folder. Updated header and homepage to remove link to Login and be mobile friendly.
+[33m7bc8bb4[m Initial commit
+[33m297e517[m Initialize project using Create React App

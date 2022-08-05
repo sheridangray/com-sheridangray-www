@@ -118,7 +118,7 @@ function App() {
         />
         <Route
           exact
-          path="/food/recipies/1"
+          path="/food/recipies/:id" //Dynamic Routing
           activeClassName="active"
           element={
             <Layout>

@@ -7,15 +7,81 @@ import facebook from "../../assets/food/facebook.svg";
 import twitter from "../../assets/food/twitter.svg";
 import pin from "../../assets/food/pin.svg";
 import close from "../../assets/meals/close.svg";
-import filter from "../../assets/food/filter.svg"
-import share from "../../assets/food/share.svg"
+import filter from "../../assets/food/filter.svg";
+import share from "../../assets/food/share.svg";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { BASE_URI } from "../../Api/api";
 const RecipeDetail = () => {
+  const [recipeDetails, setRecipeDetails] = useState([]);
   const [modalView, setModalView] = useState(false);
+  const [tdata, setData] = useState({
+    checked: false,
+    data: [],
+  });
+  const [isLoading, setLoading] = useState(true);
+  const location = useLocation();
+  const pathName = location.pathname.split("/");
+  let path = pathName[pathName.length - 1]; // to get the last segment of the URL
+  //console.log(path);
+  const fetchRecipeDetails = async () => {
+    try {
+      const res = await fetch(`${BASE_URI}/recipe/${path}`); //localhost:8080/recipe
+      const result = await res.json();
+      console.log(result);
+      setRecipeDetails(result?.data[0]);
+      setData({ ...tdata, data: result.data[0].ingredients});
+    } catch (error) {
+      console.log(error);
+    }
+
+    setLoading(false);
+  };
+  console.log(recipeDetails);
+  useEffect(() => {
+    fetchRecipeDetails();
+  }, []);
+  if (isLoading) {
+    return (
+      <div>
+        <h1>Loading......</h1>
+      </div>
+    );
+  }
+
+  const handleChange = (e) => {
+    let itemName = e.target.name;
+    let checked = e.target.checked;
+    setData((p) => {
+      let { allChecked, data } = p;
+      //when all is selected then all the checkbox will be true
+      if (itemName === "all") {
+        allChecked = checked;
+        data = data.map((item) => ({ ...item, checked: checked }));
+      } else {
+        data = data.map((e) =>
+          e._id === itemName ? { ...e, checked: checked } : e
+        );
+        allChecked = data.every((item) => item.checked);
+        if (allChecked === false) {
+          setData((p) => {
+            let { allChecked, data } = p;
+            allChecked = false;
+            data = data.map((e) => ({ ...e }));
+            return { allChecked, data };
+          });
+        }
+        console.log(allChecked, "checkAllChecked", "and data", data);
+      }
+      return { allChecked, data };
+    });
+  };
+
   return (
     <div className="meal_planner_col">
       <div className="all_recippe_row">
         <div className="allrecipee-title">
-          <h3>Pad Gra Prow</h3>
+          <h3>{recipeDetails.name}</h3>
         </div>
         <div className="filter_btn">
           <div className="fillter_tab">
@@ -34,7 +100,7 @@ const RecipeDetail = () => {
       <div className="all_recipee_details">
         <div className="details_col">
           <h3>General Information</h3>
-          <img src={media} />
+          <img src={recipeDetails.image} />
 
           <div className="meals_btn">
             <a className="add_meal" href="#">
@@ -59,23 +125,25 @@ const RecipeDetail = () => {
           </div>
           <div className="recipee_prepration">
             <h5>Categories</h5>
-            <ul>
-              <li>Thai</li>
-              <li>Beef</li>
-              <li>Low Carb</li>
-            </ul>
+            <div>
+              {recipeDetails.categories?.map((e) => (
+                <ul>
+                  <li>{e.name}</li>
+                </ul>
+              ))}
+            </div>
           </div>
           <div className="recipee_prepration">
             <h5>Time</h5>
             <ul>
               <li>
-                Prep: <strong>15 minutes</strong>
+                Prep: <strong>{recipeDetails?.prepTime} minutes</strong>
               </li>
               <li>
-                Cook: <strong>10 minutes</strong>
+                Cook: <strong>{recipeDetails?.cookTime} minutes</strong>
               </li>
               <li>
-                Total: <strong>25 minutes</strong>
+                Total: <strong>{recipeDetails?.totalTime} minutes </strong>
               </li>
             </ul>
           </div>
@@ -83,110 +151,57 @@ const RecipeDetail = () => {
           <div className="recipee_prepration">
             <h5>Visibility</h5>
             <ul>
-              <li>Public</li>
+              <li>{recipeDetails.visibility}</li>
             </ul>
           </div>
         </div>
+
         <div className="details_col">
           <h3>Ingredients</h3>
           <div className="ingredients">
-            <input type="checkbox"></input>
+            <input
+              type="checkbox"
+              name="all"
+              value="all"
+              onChange={(e) => handleChange(e)}
+              checked={tdata.allChecked}
+            />
+
             <span>Select All</span>
           </div>
-          <div className="ingredients">
-            <input type="checkbox"></input>
-            <span>2 tbsp of oil</span>
-          </div>
-          <div className="ingredients">
-            <input type="checkbox"></input>
-            <span>12 oz of beef</span>
-          </div>
-          <div className="ingredients">
-            <input type="checkbox"></input>
-            <span>5 cloves of garlic</span>
-          </div>
-          <div className="ingredients">
-            <input type="checkbox"></input>
-            <span>1/2 of a red bell pepper</span>
-          </div>
-          <div className="ingredients">
-            <input type="checkbox"></input>
-            <span>1 small onion</span>
-          </div>
-          <div className="ingredients">
-            <input type="checkbox"></input>
-            <span>2 tsp of soy sauce</span>
-          </div>
-          <div className="ingredients">
-            <input type="checkbox"></input>
-            <span>1 tsp of dark soy sauce</span>
-          </div>
-          <div className="ingredients">
-            <input type="checkbox"></input>
-            <span>1 tsp of oyster sauce</span>
-          </div>
-          <div className="ingredients">
-            <input type="checkbox"></input>
-            <span>1 tbsp of fish sauce</span>
-          </div>
-          <div className="ingredients">
-            <input type="checkbox"></input>
-            <span>1/2 tsp of sugar</span>
-          </div>
-          <div className="ingredients">
-            <input type="checkbox"></input>
-            <span>1 cup of Thai basil leaves</span>
-          </div>
-          <div className="ingredients">
-            <input type="checkbox"></input>
-            <span>1 bushel of cilantro</span>
-          </div>
-          <div className="ingredients">
-            <input type="checkbox"></input>
-            <span>1 cup of jasmine rice</span>
-          </div>
+          {tdata.data?.map((e) => (
+            <div className="details_col">
+              <div className="ingredients">
+                <input
+                  type="checkbox"
+                  name={e._id}
+                  checked={e.checked}
+                  onChange={(e) => handleChange(e)}
+                ></input>
+                <span>
+                  {e.quantity} {e.qType} of {e.ingredient}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="details_col ">
-          <h3>Preparation</h3>
-          <div className="preprations">
-            <div className="detail_step">
-              <h5>Step 1</h5>
-              <p>
-                Heat your wok over high heat, and add the <strong>oil</strong>.
-                Sear the <strong>beef</strong> until just browned, remove from
-                the wok, and set aside.
-              </p>
-            </div>
-            <div className="detail_step">
-              <h5>Step 2</h5>
-              <p>
-                Add the <strong>garlic</strong> and{" "}
-                <strong>red bell pepper</strong> to the wok and stir-fry for
-                about 20 seconds. Add the <strong>onions </strong>and stir-fry
-                until browned and slightly caramelized.
-              </p>
-            </div>
 
-            <div className="detail_step">
-              <h5>Step 3</h5>
-              <p>
-                Toss the <strong>beef</strong> back in, along with the
-                <strong>
-                  {" "}
-                  soy sauce, dark soy sauce, oyster sauce, fish sauce
-                </strong>
-                , and <strong>sugar</strong>. Stir-fry for another few seconds,
-                and then fold in the<strong> Thai basil leaves</strong> until
-                it’s just wilted.
-              </p>
-            </div>
-            <div className="detail_step">
-              <h5>Step 4</h5>
-              <p>
-                Serve with <strong>jasmine rice</strong>, and garnish with
-                <strong> cilantro</strong>.
-              </p>
-            </div>
+        <div>
+          <div className="details_col ">
+            <h3>Preparation</h3>
+            {recipeDetails.preparation?.map((e) => (
+              <div className="preprations">
+                <div className="detail_step">
+                  <h5>Step{e.step}</h5>
+                  <p>
+                    {e.info}
+                    {/* Heat your wok over high heat, and add the{" "}
+                    <strong>oil</strong>. Sear the <strong>beef</strong> until
+                    just browned, remove from the wok, and set aside. */}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

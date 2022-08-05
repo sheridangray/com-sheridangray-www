@@ -30,7 +30,6 @@ const CreateRecipee = () => {
   });
   const [categorySelected, setCategorySelected] = useState();
   const [additionalCategoryOpen, isAdditionalCateogry] = useState(false);
-
   const [cookingTime, setCookingTime] = useState({
     prepTime: 0,
     cookTime: 0,
@@ -163,12 +162,14 @@ const CreateRecipee = () => {
     });
     console.log(updatedData, "asa");
     setPreprationEdit(false);
-    setPreArr((p) => p.map(v => {
-      if (v.id === id) {
-        return { ...v, info: pStepInfo }
-      }
-      return v;
-    }));
+    setPreArr((p) =>
+      p.map((v) => {
+        if (v.id === id) {
+          return { ...v, info: pStepInfo };
+        }
+        return v;
+      })
+    );
     setPreprationStep(false);
     setPStepInfo("");
   };
@@ -228,7 +229,7 @@ const CreateRecipee = () => {
       totalTime:
         (parseInt(cookingTime.prepTime) || 0) +
         (parseInt(cookingTime.cookTime) || 0),
-      categories: [categorySelected.catId],
+      categories: categorySelected.catId,
       subCategory: categorySelected.subId,
       image: imgRes.data,
     };
@@ -419,7 +420,7 @@ const CreateRecipee = () => {
                 <input
                   type="text"
                   className="custom_input"
-                  name="ingredient"
+                   name="ingredient"
                   placeholder="Ingredient"
                   value={ingInfo.ingredient}
                   onChange={handleChange}
