@@ -22,6 +22,21 @@
           padding: 6px 15px;
           color: #FFFFFF;
           border: navajowhite;
+          &:hover{
+
+            background:#1f51e59e ;
+            cursor: pointer;
+          }
+        }
+        &.btn-disabled {
+          background:#a0b8ff9e ;
+          border-radius: 8px;
+          font-size: 14px;
+          line-height: 20px;
+          padding: 6px 15px;
+          color: #FFFFFF;
+          border: navajowhite;
+          
         }
       }
     }
@@ -122,6 +137,7 @@
             font-size: 12px;
             line-height: 16px;
             margin-top: 21px;
+            
         }
         }
   
@@ -136,6 +152,9 @@
             width: 96px;
             height: 40px;
             padding: 9px 15px;
+            &:focus-visible{
+              outline: none;
+            }
         }
           h3 {
             font-size: 12px;
@@ -149,7 +168,7 @@
               border-radius: 8px;
               width: 96px;
               height: 40px;
-              padding: 9px 15px;
+              padding: 9px 10px;
               background: #F1F3F9;
               color: rgba(0, 0, 0, 0.87);
               font-size: 14px;
@@ -178,6 +197,9 @@
           select {
             width: 96px;
             padding-left: 30px;
+            &:focus-visible{
+              outline: none;
+            }
         }
          
         }
@@ -200,6 +222,11 @@
           font-size: 12px;
           line-height: 16px;
           margin-top: 21px;
+          cursor: pointer;
+          &:hover{
+opacity: 0.8;
+            text-decoration: underline;
+          }
          }
         input {
         border: 1px solid rgba(0, 0, 0, 0.12);
@@ -358,6 +385,12 @@
           font-size: 12px;
           line-height: 16px;
           margin-top: 21px;
+          cursor: pointer;
+          
+          &:hover{
+            opacity: 0.8;
+           text-decoration: underline;
+          }
       }
       }
       

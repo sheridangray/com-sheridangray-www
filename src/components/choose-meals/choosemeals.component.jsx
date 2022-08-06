@@ -1,25 +1,56 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./choosemeals.style.scss";
 import close from "../../assets/meals/close.svg";
 import Search from "../../assets/meals/search.svg";
 import plus from "../../assets/meals/plus.svg";
 import minus from "../../assets/meals/minus.svg";
-
+import { useDispatch, useSelector } from "react-redux";
+import { getCategoryList } from "../../redux/recipie-sagas/recipe.actions";
+import back from "../../assets/meals/back.svg";
+import { BASE_URI } from "../../Api/api";
+import Card from "../Card";
 const ChooseMealsPage = ({ setModalView }) => {
+  const dispatch = useDispatch();
+  const {
+    recipe: { categoriesList },
+  } = useSelector((state) => {
+    return state;
+  });
+
+  console.log({ categoriesList });
+
+  useEffect(() => {
+    dispatch(getCategoryList());
+  }, [dispatch]);
+
   const [navItems, setNavItems] = useState(1);
-  const navItemArr = [
-    { id: 1, name: "Search" },
-    { id: 2, name: "World Cuisine" },
-    { id: 3, name: "Healthy Recipes" },
-    { id: 4, name: "Dinner" },
-    { id: 5, name: "Lunch" },
-    { id: 6, name: "Breakfast" },
-    { id: 7, name: "Salads" },
-    { id: 8, name: "Side Dishes" },
-    { id: 9, name: "Soup, Stew & Chili Recipies" },
-    { id: 10, name: "Appetizers & Snacks" },
-    { id: 11, name: "Desserts" },
-  ];
+  const [headerInfo, setHeaderInfo] = useState("");
+  const [subCategory, setSubCategory] = useState([]);
+  const [recpieDetail, recpieDetailOpen] = useState(false);
+  const [chooseClicked, setChooseClicked] = useState(false);
+  const [recipeData, setRecipeData] = useState([]);
+  const handleCategory = (tab) => {
+    setChooseClicked(false);
+    setNavItems(tab._id);
+    setSubCategory(tab.subCategoriesInfo);
+    setHeaderInfo(tab.name);
+    recpieDetailOpen(false);
+  };
+
+  const getRecipeData = async (e) => {
+    recpieDetailOpen(true);
+    const id = e._id;
+    const data = await fetch(
+      `${BASE_URI}/recipe/getSubCategoriesRecipes/${id}`,
+      {
+        method: "POST",
+      }
+    );
+    const result = await data.json();
+    console.log({ result });
+    setRecipeData(result?.data);
+    // window.open(result.data[result.data.length -1].image, '_blank')
+  };
   const sideBarTabs = (e) => {};
   return (
     <div id="myModal" class="modal">
@@ -28,14 +59,22 @@ const ChooseMealsPage = ({ setModalView }) => {
         <div className="choose_meal_row">
           <div className="search_bar_meal">
             <ul onClick={sideBarTabs}>
-              {navItemArr.map((tab) => {
+              <li
+                onClick={() => {
+                  setNavItems(1);
+                  setSubCategory([]);
+                }}
+                className={navItems == 1 ? "active" : ""}
+              >
+                Search
+              </li>
+              {categoriesList?.map((tab) => {
                 let btnClass = {
-                  active: navItems === tab.id,
+                  active: navItems === tab._id,
                 };
-
                 return (
                   <li
-                    onClick={() => setNavItems(tab.id)}
+                    onClick={() => handleCategory(tab)}
                     className={btnClass.active ? "active" : ""}
                   >
                     {tab.name}
@@ -46,12 +85,28 @@ const ChooseMealsPage = ({ setModalView }) => {
           </div>
           <div className="choose_search_row">
             <div className="search_bar">
-              <h3>Search</h3>
-              <button onClick={() => setModalView(false)}>
-                <img src={close} />
-              </button>
+              <div className="back_with_title">
+                {chooseClicked && (
+                  <span className="backto">
+                    <img src={back} onClick={()=> {recpieDetailOpen(false); setChooseClicked(false);}}/>
+                  </span>
+                )}
+
+                <h3> {navItems == 1 ? "Search" : `${headerInfo} Recipies`} </h3>
+              </div>
+
+              <div className="filter_with_search">
+                {chooseClicked && (
+                  <span className="search_filter">
+                    <input type="text" placeholder="Filter by Keyword"></input>
+                  </span>
+                )}
+                <button onClick={() => setModalView(false)}>
+                  <img src={close} />
+                </button>
+              </div>
             </div>
-            <div className="recipee_meal">
+            <div className="recipee_meal meals_day">
               {navItems == 1 && (
                 <form>
                   <div className="input_meal">
@@ -91,21 +146,27 @@ const ChooseMealsPage = ({ setModalView }) => {
                   </div>
                 </form>
               )}
-              {navItems == 6 && (
+              {recpieDetail ? (
+                <div className="card">
+                  {recipeData?.map((e) => (
+                    <Card img={e.image} name={e.name} />
+                  ))}
+                </div>
+              ) : (
                 <div className="recipee_order_list">
                   <ul>
-                    <li>Breakfast Burrito</li>
-                    <li>Casserole</li>
-                    <li>Crepe</li>
-                    <li>Egg</li>
-                    <li>french Toast</li>
-                    <li>Frittata</li>
-                    <li>Granola</li>
-                    <li>Omlet</li>
-                    <li>Overnight Oat</li>
-                    <li>Pancake</li>
-                    <li>Quiche</li>
-                    <li>Waffle</li>
+                    {subCategory?.map((e) => (
+                      <React.Fragment key={e._id}>
+                        <li
+                          onClick={() => {
+                            getRecipeData(e);
+                            setChooseClicked(true);
+                          }}
+                        >
+                          {e.name}
+                        </li>
+                      </React.Fragment>
+                    ))}
                   </ul>
                 </div>
               )}

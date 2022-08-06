@@ -12,27 +12,31 @@ import {
   getCategoryList,
 } from "../../redux/recipie-sagas/recipe.actions";
 import { useSelector } from "react-redux";
-import { qTypeArr, servingArr } from "../../data/staticData";
+import { categoryOptions, qTypeArr, servingArr } from "../../data/staticData";
 import { BASE_URI } from "../../Api/api";
+import Multiselect from "multiselect-react-dropdown";
 
 const CreateRecipee = () => {
   const [recipeName, setRecipeName] = useState("");
-  const [files, setFiles] = useState([]);
+  const [visibility, setVisibility] = useState("");
+  const [imgfiles, setFiles] = useState([]);
   const [addIngOpen, setAddIngOpen] = useState(false);
   const [preprationStep, setPreprationStep] = useState(false);
-  const [stepCount, setStepCount] = useState(1);
+  const [stepCount, setStepCount] = useState(0);
   const [ingInfo, setIngInfo] = useState({
     ingredient: "",
     quantity: "",
     qType: "",
   });
   const [categorySelected, setCategorySelected] = useState();
+  const [additionalCategoryOpen, isAdditionalCateogry] = useState(false);
   const [cookingTime, setCookingTime] = useState({
     prepTime: 0,
     cookTime: 0,
   });
   const [servingSize, setServingSize] = useState();
   const [pStepInfo, setPStepInfo] = useState("");
+
   let [ingArr, setIngArr] = useState([]);
   let [preArr, setPreArr] = useState([]);
 
@@ -58,6 +62,7 @@ const CreateRecipee = () => {
   };
 
   const handleChange = (e) => {
+    console.log(e);
     let name = e.target.name;
     setIngInfo({ ...ingInfo, [name]: e.target.value });
   };
@@ -67,8 +72,10 @@ const CreateRecipee = () => {
   };
 
   const savePrepration = () => {
-    let step = stepCount;
-    setStepCount((p) => stepCount + 1);
+    let lastStep = preArr.length;
+    console.log({ lastStep });
+    let step = lastStep + 1;
+    setStepCount(step);
     setPreprationStep(false);
     let id = Date.now();
     setPreArr([...preArr, { id: id, info: pStepInfo, step: step }]);
@@ -76,6 +83,8 @@ const CreateRecipee = () => {
   };
 
   const deltePrepration = (id) => {
+    setStepCount((p) => stepCount - 1);
+
     let filterPre = preArr.filter((val) => val.id !== id);
     setPreArr(filterPre);
   };
@@ -85,8 +94,96 @@ const CreateRecipee = () => {
     setIngArr(filterIng);
   };
 
+  // For Editing Ingdritents
+  const [editIngClicked, isEditIngClicked] = useState(false);
+  const editIngArray = (val) => {
+    localStorage.setItem("id", val.id);
+    setIngInfo({
+      ingredient: val.ingredient,
+      quantity: val.quantity,
+      qType: val.qType,
+    });
+    // console.log(val);
+    isEditIngClicked(true);
+    setAddIngOpen(true);
+  };
+
+  const updateIngredient = () => {
+    let id = localStorage.getItem("id");
+    let findID = ingArr.find((e) => e.id == id);
+    findID.ingredient = ingInfo.ingredient;
+    findID.quantity = ingInfo.quantity;
+    findID.qType = ingInfo.qType;
+
+    console.log(findID, "findID");
+
+    let updatedData = ingArr.map((v) => {
+      if (v.id == id) {
+        return {
+          id: id,
+          ingredient: ingInfo.ingredient,
+          quantity: ingInfo.quantity,
+          qType: ingInfo.qType,
+        };
+      } else {
+        return v;
+      }
+    });
+    console.log(updatedData);
+    setIngArr(updatedData);
+    setAddIngOpen(false);
+    isEditIngClicked(false);
+    setAddIngOpen(false);
+    setIngInfo({
+      ingredient: "",
+      quantity: "",
+      qType: "",
+    });
+  };
+  const [isPreprationEdit, setPreprationEdit] = useState(false);
+  const editPrepration = (res) => {
+    localStorage.setItem("preId", res.id);
+    setPStepInfo(res.info);
+    setPreprationStep(true);
+    setPreprationEdit(true);
+  };
+  const updatePrepration = () => {
+    let id = localStorage.getItem("preId");
+    let findItem = preArr.find((item) => item.id == id);
+    findItem.info = pStepInfo;
+    console.log({ findItem }, { pStepInfo });
+
+    let updatedData = preArr.map((val) => {
+      if (val.id == id) {
+        return findItem;
+      } else {
+        return val;
+      }
+    });
+    console.log(updatedData, "asa");
+    setPreprationEdit(false);
+    setPreArr((p) =>
+      p.map((v) => {
+        if (v.id === id) {
+          return { ...v, info: pStepInfo };
+        }
+        return v;
+      })
+    );
+    setPreprationStep(false);
+    setPStepInfo("");
+  };
+
+  // Code ends here for edit ing
+
+  const handleVisibility = (e) => {
+    console.log({ e });
+    setVisibility(e[0].key);
+  };
+
   const handleCategories = (event) => {
-    setCategorySelected(event.target.value);
+    console.log(event);
+    setCategorySelected(event[0]);
   };
 
   const handleServingSize = (event) => {
@@ -94,6 +191,20 @@ const CreateRecipee = () => {
   };
 
   const saveFormData = async () => {
+    //Upload Image
+    const data = new FormData();
+    data.append("image", imgfiles[0], imgfiles[0].name);
+
+    let requestOptions = {
+      method: "POST",
+      body: data,
+      redirect: "follow",
+    };
+
+    const imgResult = await fetch(`${BASE_URI}/upload/image`, requestOptions);
+    const imgRes = await imgResult.json();
+    console.log(imgRes, "img res");
+
     let ingredientArray = ingArr.map((val) => {
       return {
         ingredient: val.ingredient,
@@ -111,24 +222,29 @@ const CreateRecipee = () => {
       name: recipeName,
       ingredients: ingredientArray,
       preparation: preprationArray,
-      servingSize: Number(servingSize),
-      prepTime: cookingTime.prepTime,
-      cookTime: cookingTime.cookTime,
+      visibility: visibility,
+      servingSize: Number(servingSize) || 1,
+      prepTime: cookingTime.prepTime || 0,
+      cookTime: cookingTime.cookTime || 0,
       totalTime:
         (parseInt(cookingTime.prepTime) || 0) +
-        (parseInt(cookingTime.cookTime) || 0).toString(),
-      categories: [categorySelected],
+        (parseInt(cookingTime.cookTime) || 0),
+      categories: categorySelected.catId,
+      subCategory: categorySelected.subId,
+      image: imgRes.data,
     };
     console.log(formData);
+
     const res = await fetch(`${BASE_URI}/recipe`, {
       method: "POST",
-      headers:{
-        "Content-Type": "application/json"
+      headers: {
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     });
     const result = await res.json();
     console.log(result);
+    alert(result.statusMessage);
   };
 
   const dispatch = useDispatch();
@@ -137,6 +253,21 @@ const CreateRecipee = () => {
   } = useSelector((state) => {
     return state;
   });
+
+  console.log(categoriesList);
+
+  let multiCategories = categoriesList
+    ?.map((outer) =>
+      outer.subCategoriesInfo?.map((inner) => {
+        return {
+          category: outer.name,
+          subCategory: inner.name,
+          catId: outer._id,
+          subId: inner._id,
+        };
+      })
+    )
+    .flat();
 
   useEffect(() => {
     dispatch(getCategoryList());
@@ -147,7 +278,31 @@ const CreateRecipee = () => {
       <div className="create_recipe_main">
         <div className="title_recipe">
           <p>Create Recipe</p>{" "}
-          <button className="btn-default" onClick={() => saveFormData()}>
+          <button
+            className={
+              recipeName.length > 0 &&
+              ingArr.length > 0 &&
+              preArr.length > 0 &&
+              servingSize &&
+              cookingTime.prepTime &&
+              cookingTime.cookTime &&
+              categorySelected
+                ? "btn-default"
+                : "btn-disabled"
+            }
+            onClick={() => saveFormData()}
+            disabled={
+              recipeName.length > 0 &&
+              ingArr.length > 0 &&
+              preArr.length > 0 &&
+              servingSize &&
+              cookingTime.prepTime &&
+              cookingTime.cookTime &&
+              categorySelected
+                ? false
+                : true
+            }
+          >
             Save
           </button>
         </div>
@@ -163,8 +318,8 @@ const CreateRecipee = () => {
                 onChange={(e) => setRecipeName(e.target.value)}
               />
               <div className="drop-image">
-                {files.length == 0 && <img src={selectimage} />}
-                <DragnDrop files={files} setFiles={setFiles} />
+                {imgfiles.length == 0 && <img src={selectimage} />}
+                <DragnDrop files={imgfiles} setFiles={setFiles} />
               </div>
             </div>
             <div className="serving-size">
@@ -179,12 +334,25 @@ const CreateRecipee = () => {
             </div>
             <div className="visibility">
               <h3>Visibility</h3>
-              <select>
-                <option>Select who can see this recipe</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-              </select>
+              <Multiselect
+                displayValue="key"
+                placeholder="Select who can see this recipe"
+                onKeyPressFn={function noRefCheck() {}}
+                onRemove={function noRefCheck() {}}
+                onSearch={function noRefCheck() {}}
+                onSelect={(e) => handleVisibility(e)}
+                options={[
+                  {
+                    cat: "Family",
+                    key: "Family",
+                  },
+                  {
+                    cat: "Public",
+                    key: "Public",
+                  },
+                ]}
+                singleSelect
+              />
             </div>
             <div className="time">
               <div className="prep">
@@ -218,15 +386,29 @@ const CreateRecipee = () => {
             </div>
             <div className="visibility">
               <h3>Categoriess</h3>
-              <DropDown
-                options={categoriesList}
-                handleChange={handleCategories}
-                selected={categorySelected}
+              <Multiselect
+                displayValue="subCategory"
+                groupBy="category"
+                onKeyPressFn={function noRefCheck() {}}
+                onRemove={function noRefCheck() {}}
+                onSearch={function noRefCheck() {}}
+                onSelect={(e) => handleCategories(e)}
+                singleSelect
+                options={multiCategories}
               />
-
-              <a href="#" className="add_cate">
+              <span
+                className="add_cate"
+                onClick={() => isAdditionalCateogry(true)}
+              >
                 Add additional category
-              </a>
+              </span>
+              {additionalCategoryOpen && (
+                <div>
+                  <input type="text" placeholder="create category" />
+                  <br />
+                  <input type="text" placeholder="create Subcategory" />
+                </div>
+              )}
             </div>
           </div>
           <div className="ingrediant">
@@ -238,7 +420,7 @@ const CreateRecipee = () => {
                 <input
                   type="text"
                   className="custom_input"
-                  name="ingredient"
+                   name="ingredient"
                   placeholder="Ingredient"
                   value={ingInfo.ingredient}
                   onChange={handleChange}
@@ -252,7 +434,6 @@ const CreateRecipee = () => {
                     value={ingInfo.quantity}
                     onChange={handleChange}
                   />
-
                   <DropDown
                     handleChange={handleChange}
                     options={qTypeArr}
@@ -261,7 +442,22 @@ const CreateRecipee = () => {
                   />
                 </div>
                 <div className="btn">
-                  <button onClick={saveIngredient}>Save</button>
+                  {editIngClicked ? (
+                    <button onClick={updateIngredient}>Update</button>
+                  ) : (
+                    <button
+                      onClick={saveIngredient}
+                      disabled={
+                        ingInfo.ingredient.length > 0 &&
+                        ingInfo.quantity.length > 0 &&
+                        ingInfo.qType.length > 0
+                          ? false
+                          : true
+                      }
+                    >
+                      Save
+                    </button>
+                  )}
                   <span
                     className="add_cate"
                     onClick={() => setAddIngOpen(false)}
@@ -276,13 +472,13 @@ const CreateRecipee = () => {
               <div key={val.id}>
                 <div className="after_add">
                   <div className="content">
-                    {val.quantity} {val.ingredient} {val.qType}
+                    {val?.quantity} {val?.ingredient} {val?.qType}
                   </div>
                   <div className="action">
                     <span className="delete" onClick={() => deleteIng(val.id)}>
                       <img src={del} />
                     </span>
-                    <span className="edit">
+                    <span className="edit" onClick={() => editIngArray(val)}>
                       <img src={edit} />
                     </span>
                     <span className="shuffle">
@@ -300,11 +496,11 @@ const CreateRecipee = () => {
             <h3>Preparation</h3>
 
             {/* after add step */}
-            {preArr?.map((res) => (
-              <div className="prepration-step " key={res.id}>
-                <h4>Step {res.step}</h4>
+            {preArr?.map((res, id) => (
+              <div className="prepration-step ">
+                <h4>Step {id + 1} </h4>
                 <div className="edit">
-                  <textarea>{res.info}</textarea>
+                  <textarea value={res.info} />
                   <div className="action">
                     <span
                       className="delete"
@@ -313,7 +509,7 @@ const CreateRecipee = () => {
                       <img src={del} />
                     </span>
                     <span className="edit">
-                      <img src={edit} />
+                      <img src={edit} onClick={() => editPrepration(res)} />
                     </span>
                     <span className="shuffle">
                       <img src={sort} />
@@ -324,13 +520,29 @@ const CreateRecipee = () => {
             ))}
             {preprationStep && (
               <div className="prepration-step">
-                <h4>Step {stepCount}</h4>
+                {isPreprationEdit ? " " : <h4>Step {stepCount + 1}</h4>}
+
                 <textarea
                   value={pStepInfo}
                   onChange={(e) => setPStepInfo(e.target.value)}
                 />
                 <div className="btn">
-                  <button onClick={savePrepration}>Save</button>
+                  {isPreprationEdit ? (
+                    <button
+                      onClick={updatePrepration}
+                      // disabled={pStepInfo.length > 0 ? false : true}
+                    >
+                      Update
+                    </button>
+                  ) : (
+                    <button
+                      onClick={savePrepration}
+                      disabled={pStepInfo.length > 0 ? false : true}
+                    >
+                      Save
+                    </button>
+                  )}
+
                   <span
                     className="add_cate"
                     onClick={() => setPreprationStep(false)}
