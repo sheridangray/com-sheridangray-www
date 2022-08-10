@@ -2,6 +2,8 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 import { getFirestore } from "@firebase/firestore";
+import {getStorage} from 'firebase/storage'
+
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -17,6 +19,8 @@ const firebaseConfig = {
 // Initialize Firebase
 
 const app = firebase.initializeApp(firebaseConfig);
+export const storage = getStorage(app)
+
 
 export const createUserProfileDocument = async (userAuth, additionalData) => {
   if (!userAuth) return;
