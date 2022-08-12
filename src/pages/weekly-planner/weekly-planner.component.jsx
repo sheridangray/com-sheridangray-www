@@ -10,12 +10,12 @@ import { BASE_URI } from "../../Api/api";
 const WeeklyPlannerPage = () => {
   const [mealData, setMealData] = useState();
 
+  // const startDate=
+  // const endDate=
+
   const fetchMealData = async () => {
     try {
-      const res = await fetch(
-      //  `https://smg-food-app-server.herokuapp.com/meals/getMealsByDate?startDate=2022-08-01&endDate=2022-08-11`
-      `${BASE_URI}/recipe/`
-      );
+      const res = await fetch(`${BASE_URI}meals/getMealsByDate?startDate=2022-08-01&endDate=2022-08-11`);
       const result = await res.json();
       console.log(result);
       setMealData(result?.data);
@@ -24,9 +24,9 @@ const WeeklyPlannerPage = () => {
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
     fetchMealData();
-  }, []);
+  }, []);  
 
   return (
     <div className="weekly-planner">
