@@ -34,13 +34,16 @@ const img = {
   height: "100%",
 };
 
-function DragnDrop({files,setFiles}) {
+function DragnDrop({files,setFiles,setImage}) {
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/*": [],
     },
     onDrop: (acceptedFiles) => {
+      console.log(acceptedFiles);
+      setImage(acceptedFiles[0])
       setFiles(
+
         acceptedFiles.map((file) =>
           Object.assign(file, {
             preview: URL.createObjectURL(file),

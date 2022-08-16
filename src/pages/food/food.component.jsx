@@ -25,11 +25,15 @@ import startOfWeek from "date-fns/startOfWeek";
 import CalendarItems from "../../components/CalendarItems/CalendarItems";
 import CreateRecipee from "../../components/create-recipee/CreateRecipee.component";
 import AllRecipes from "../allRecipies/AllRecipes";
+import { BASE_URI } from "../../Api/api";
 const FoodPage = () => {
   let today = startOfToday();
   const [modalView, setModalView] = useState(false);
   let [currentWeek, setCurretWeek] = useState(today);
   const dayNum = getDay(today);
+  const [mealData, setMealData] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+
   const weekStart = startOfWeek(
     currentWeek,
     { weekStartsOn: dayNum },
@@ -64,15 +68,53 @@ const FoodPage = () => {
   ];
 
   const [mealCategory, setMealCategory] = useState(mealCategories);
-
+  console.log(mealCategory);
+  // const mine = mealData.breakFastMeals
+  // console.log(mine);
+  // console.log(("HEEELO"),mine);
   const handleChekBox = (e) => {
     let name = e.target.value;
     let checkedIItem = e.target.checked;
+    
     setMealCategory((p) =>
       p.map((el) => (el.type === name ? { ...el, checked: checkedIItem } : el))
     );
+  
+  
   };
 
+  const fetchMealData = async () => {
+    console.log(weekStart);
+    console.log(weekEnd);
+    const initialDate = format(weekStart, "yyyy/MM/dd ");
+    const endDate = format(weekEnd, "yyyy/MM/dd ");
+
+    try {
+      const res = await fetch(
+        `${BASE_URI}/meals/getMealsByDate?startDate=${initialDate}&endDate=${endDate}` //startDate=2022-08-01&endDate=2022-08-11
+      );
+      const result = await res.json();
+      console.log(result.data);
+      setMealData(result?.data.breakFastMeals)
+      
+    } catch (error) {
+      console.log(error);
+    }
+   
+     setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchMealData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div>
+        <h1>Loading......</h1>
+      </div>
+    );
+  }
   return (
     <div>
       <div className="meal_planner_col">
@@ -112,11 +154,14 @@ const FoodPage = () => {
           </div>
         </div>
         <div className="mealsday_row">
-          {days.map((day) => (
+          {mealData?.map((day) => (
             <CalendarItems
-              mealDay={format(new Date(day), "EEEE")}
-              mealDate={format(day, "d")}
+              mealDay= {day.day}
+              mealDate=   {format(new Date(day.date), 'dd')}        //       {day.date}            //{new Date(day.date,day.getDay() )}
               setModalView={setModalView}
+              //mealData={mealData}
+              name={day.recipe.name}
+              image={day.recipe.image}
             />
           ))}
 

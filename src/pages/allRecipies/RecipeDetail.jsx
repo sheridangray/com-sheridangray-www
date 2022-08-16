@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import "../../pages/allRecipies/allRecipes.style.scss";
 import star from "../../assets/food/star.svg";
 import halfstar from "../../assets/food/halfstar.svg";
-import media from "../../assets/food/media.png";
 import facebook from "../../assets/food/facebook.svg";
 import twitter from "../../assets/food/twitter.svg";
 import pin from "../../assets/food/pin.svg";
@@ -12,15 +13,41 @@ import share from "../../assets/food/share.svg";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { BASE_URI } from "../../Api/api";
+
 const RecipeDetail = () => {
+  
   const [recipeDetails, setRecipeDetails] = useState([]);
   const [modalView, setModalView] = useState(false);
+  const [mealPlannerModalView, setMealPlannerModalView] = useState(false);
   const [tdata, setData] = useState({
     checked: false,
     data: [],
   });
+
   const [isLoading, setLoading] = useState(true);
   const location = useLocation();
+
+  //datepicker-//calendar
+  const [date, setDate] = useState(new Date());
+  const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  let dayNumer = date.getDay();
+  const dayName = days[dayNumer];
+
+  //date format
+
+  //  let time= date.split("T")[ 0]
+
+  //let time= setDate.substring(0, 10)
+  //let time= setDate.toGMTString()
+
   const pathName = location.pathname.split("/");
   let path = pathName[pathName.length - 1]; // to get the last segment of the URL
   //console.log(path);
@@ -30,7 +57,7 @@ const RecipeDetail = () => {
       const result = await res.json();
       console.log(result);
       setRecipeDetails(result?.data[0]);
-      setData({ ...tdata, data: result.data[0].ingredients});
+      setData({ ...tdata, data: result.data[0].ingredients });
     } catch (error) {
       console.log(error);
     }
@@ -41,6 +68,28 @@ const RecipeDetail = () => {
   useEffect(() => {
     fetchRecipeDetails();
   }, []);
+
+  const testFunction = (e) => {
+    console.log("testfunction");
+    let recipeInfo = JSON.stringify({
+      day: dayName,
+      date: e.toISOString().split("T")[0],
+      categoryId: recipeDetails.categories[0]._id,
+      recipeId: recipeDetails._id,
+    });
+    console.log("Information", recipeInfo);
+    fetch(`${BASE_URI}/meals`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: recipeInfo,
+    }).then((result) => {
+      console.log("DATA", result);
+    });
+  };
+
   if (isLoading) {
     return (
       <div>
@@ -76,7 +125,10 @@ const RecipeDetail = () => {
       return { allChecked, data };
     });
   };
-
+  const handleDate = (e) => {
+    setDate(e);
+    testFunction(e);
+  };
   return (
     <div className="meal_planner_col">
       <div className="all_recippe_row">
@@ -103,12 +155,13 @@ const RecipeDetail = () => {
           <img src={recipeDetails.image} />
 
           <div className="meals_btn">
-            <a className="add_meal" href="#">
+            <button
+              className="add_meal"
+              onClick={() => setMealPlannerModalView(true)}
+            >
               Add to Meal Planner
-            </a>
-            <a className="rate_meal" href="#">
-              Rate Meal
-            </a>
+            </button>
+            <button className="rate_meal">Rate Meal</button>
           </div>
 
           <div className="recipee_rating">
@@ -193,12 +246,7 @@ const RecipeDetail = () => {
               <div className="preprations">
                 <div className="detail_step">
                   <h5>Step{e.step}</h5>
-                  <p>
-                    {e.info}
-                    {/* Heat your wok over high heat, and add the{" "}
-                    <strong>oil</strong>. Sear the <strong>beef</strong> until
-                    just browned, remove from the wok, and set aside. */}
-                  </p>
+                  <p>{e.info}</p>
                 </div>
               </div>
             ))}
@@ -236,6 +284,39 @@ const RecipeDetail = () => {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {mealPlannerModalView && (
+        <div className="modal share_popup_row">
+          <div className="modal-content">
+            <div className="share_popup">
+              <div className="search_bar">
+                <div className="back_with_title">
+                  <h3> Add to Meal Plan </h3>
+                </div>
+                <div className="filter_with_search">
+                  <button onClick={() => setMealPlannerModalView(false)}>
+                    <img src={close} />
+                  </button>
+                </div>
+              </div>
+              <div className="app">
+                <h1 className="text-center"></h1>
+                <div className="calendar-container">
+                  <Calendar onChange={(e) => handleDate(e)} value={date} />
+                </div>
+                <p className="text-center">
+                  <span className="bold">Selected Date:</span>{" "}
+                  {/* {date.toDateString()}  */}
+                  {/* {JSON.stringify(dayName)} */}
+                  {/* {JSON.stringify(time)} */}
+                  {JSON.stringify(date.toISOString().split("T")[0])}
+                </p>
+              </div>
+            </div>
+          </div>
+          {/* <button onClick={() => testFunction()}>Dbaao Meko</button> */}
         </div>
       )}
     </div>

@@ -7,6 +7,9 @@ import DropDown from "../drop-down/DropDown";
 import DragnDrop from "../drag-and-drop/DragnDrop";
 import selectimage from "../../assets/food/upload.png";
 import { useDispatch } from "react-redux";
+import { storage } from "../../firebase/firebase.utils";
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
+
 import {
   addRecipe,
   getCategoryList,
@@ -20,6 +23,10 @@ const CreateRecipee = () => {
   const [recipeName, setRecipeName] = useState("");
   const [visibility, setVisibility] = useState("");
   const [imgfiles, setFiles] = useState([]);
+  const [imageList, setImageList] = useState([]); // to track the url of each of the images upload.
+  const imageListRef = ref(storage, "recipeimages/"); // to refer the storage location from where we need to fetch the URL
+  const [image, setImage] = useState(null);
+
   const [addIngOpen, setAddIngOpen] = useState(false);
   const [preprationStep, setPreprationStep] = useState(false);
   const [stepCount, setStepCount] = useState(0);
@@ -190,21 +197,33 @@ const CreateRecipee = () => {
     setServingSize(event.target.value);
   };
 
+  useEffect(() => {
+    listAll(imageListRef).then((response) => {
+      console.log(response); //here we find out that the images URL are not directly provided by Firebase. need a prebuilt fxn for that
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setImageList((prev) => [...prev, url]);
+        });
+      });
+    });
+  }, []);
+
+  const uploadImageFun = async () => {
+    const imageRef = ref(storage, `recipeimages/${image.name}RISHABH `); //to give random name to the image
+    //so that same file name doesn't exist
+    const snapshot = await uploadBytes(imageRef, image);
+
+    const url = await getDownloadURL(snapshot.ref);
+    // const res = await url;
+    console.log(url);
+    return url;
+  };
+
   const saveFormData = async () => {
-    //Upload Image
-    const data = new FormData();
-    data.append("image", imgfiles[0], imgfiles[0].name);
+    /////////////////////////
+    //Upload
 
-    let requestOptions = {
-      method: "POST",
-      body: data,
-      redirect: "follow",
-    };
-
-    const imgResult = await fetch(`${BASE_URI}/upload/image`, requestOptions);
-    const imgRes = await imgResult.json();
-    console.log(imgRes, "img res");
-
+    const imgRes = await uploadImageFun();
     let ingredientArray = ingArr.map((val) => {
       return {
         ingredient: val.ingredient,
@@ -231,20 +250,24 @@ const CreateRecipee = () => {
         (parseInt(cookingTime.cookTime) || 0),
       categories: categorySelected.catId,
       subCategory: categorySelected.subId,
-      image: imgRes.data,
+      image: imgRes,
     };
     console.log(formData);
 
-    const res = await fetch(`${BASE_URI}/recipe`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-    const result = await res.json();
-    console.log(result);
-    alert(result.statusMessage);
+    if (!imgRes) {
+      console.log("please wait");
+    } else {
+      const res = await fetch(`${BASE_URI}/recipe`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const result = await res.json();
+      console.log(result);
+      alert(result.statusMessage);
+    }
   };
 
   const dispatch = useDispatch();
@@ -319,7 +342,11 @@ const CreateRecipee = () => {
               />
               <div className="drop-image">
                 {imgfiles.length == 0 && <img src={selectimage} />}
-                <DragnDrop files={imgfiles} setFiles={setFiles} />
+                <DragnDrop
+                  files={imgfiles}
+                  setFiles={setFiles}
+                  setImage={setImage}
+                />
               </div>
             </div>
             <div className="serving-size">
@@ -420,7 +447,7 @@ const CreateRecipee = () => {
                 <input
                   type="text"
                   className="custom_input"
-                   name="ingredient"
+                  name="ingredient"
                   placeholder="Ingredient"
                   value={ingInfo.ingredient}
                   onChange={handleChange}
