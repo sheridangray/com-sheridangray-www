@@ -1,6 +1,8 @@
+@import "../../styles/colors";
+
 .homepage {    
  
-
+    
     .banner {
         margin: 0;
         position: relative;
@@ -27,6 +29,11 @@
 
         .content {
             margin: 16px;
+            color: $text-light-primary;
+
+            h1, h4, p {
+                color: $text-light-primary;
+            }
         }
     }
 

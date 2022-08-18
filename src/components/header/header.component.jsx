@@ -25,39 +25,6 @@ export const Header = () => {
             <Link to="/" className="logo">
               <img src={Logo} alt="" />
             </Link>
-
-            <NavLink
-              to="/health"
-              className={(isActive) =>
-                "nav-link" + (!isActive ? " unselected" : " selected")
-              }
-            >
-              Health
-            </NavLink>
-            <NavLink
-              to="/relationships"
-              className={(isActive) =>
-                "nav-link" + (!isActive ? " unselected" : " selected")
-              }
-            >
-              Relationships
-            </NavLink>
-            <NavLink
-              to="/money"
-              className={(isActive) =>
-                "nav-link" + (!isActive ? " unselected" : " selected")
-              }
-            >
-              Money
-            </NavLink>
-            <NavLink
-              to="/happiness"
-              className={(isActive) =>
-                "nav-link" + (!isActive ? " unselected" : " selected")
-              }
-            >
-              Happiness
-            </NavLink>
             <NavLink
               to="/food"
               className={(isActive) =>
@@ -73,14 +40,17 @@ export const Header = () => {
           Sheridan Gray
         </Link>
       )}
-      {currentUser ? (
+      {
+        currentUser ? (
         <ProfileBadge />
       ) : (
         <div className="options">
           <label onClick={() => dispatch(googleSignInStart())}>Log in</label>
         </div>
       )}
-      {isProfileMenuHidden ? null : <ProfileMenu />}
+      {
+        isProfileMenuHidden ? null : <ProfileMenu />
+      }
     </div>
   );
 };
