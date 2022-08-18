@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-
 import "./profile-menu.styles.scss";
 import { toggleProfileMenuHidden } from "../../redux/profile-menu/profile-menu.actions";
 import { signOutStart } from "../../redux/user/user.actions";
