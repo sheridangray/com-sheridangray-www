@@ -1,6 +1,6 @@
 import React from "react";
 import "./layout.styles.scss";
-import recipee from "../assets/meals/recipee.svg";
+import recipe from "../assets/meals/recipe.svg";
 import meal from "../assets/meals/meal.svg";
 import { useLocation, useNavigate } from "react-router";
 const Layout = ({ children }) => {
@@ -8,7 +8,7 @@ const Layout = ({ children }) => {
   const { pathname } = useLocation();
   return (
     <div className="meal_plan_row">
-      <div className="recipee_sidebar">
+      <div className="recipe_sidebar">
         <h3>Food</h3>
         <ul>
           <li
@@ -20,7 +20,7 @@ const Layout = ({ children }) => {
             }
             onClick={() => navigate("/food/recipies")}
           >
-            <img src={recipee} /> Recipies
+            <img src={recipe} alt="recipe" /> Recipies
           </li>
           <li
             to="/food/mealplan"
