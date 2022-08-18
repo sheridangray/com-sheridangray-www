@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import recipee from "../../assets/meals/recipee.svg";
+import recipe from "../../assets/meals/recipe.svg";
 import meal from "../../assets/meals/meal.svg";
 import arrow from "../../assets/meals/arrow.svg";
 import rightarrow from "../../assets/meals/rightarrow.svg";
