@@ -27,7 +27,7 @@ const Layout = ({ children }) => {
             className={pathname == "/food" ? "active" : ""}
             onClick={() => navigate("/food/")}
           >
-            <img src={meal} /> Meal Planner
+            <img src={meal} alt="Meal Planner" /> Meal Planner
           </li>
         </ul>
       </div>
