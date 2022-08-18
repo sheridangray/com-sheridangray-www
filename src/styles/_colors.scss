@@ -1,32 +1,32 @@
 $white: #ffffff;
 $black: #000000;
 
-$primary-color: #182153;
-$secondary-color: #006369;
-$grey-color: #C2C9D1;
-$success-color: #11A631;
-$warning-color: #DDA943;
-$alert-color: #DD4343;
+$primary-color: #1F51E5;
+$secondary-color: #8724A8;
+$grey-color: #545D78;
+$success-color: #008A45;
+$warning-color: #FA9200;
+$alert-color: #E53451;
 
-$primary-color-900: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), $primary-color;
-$primary-color-800: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), $primary-color;
-$primary-color-700: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), $primary-color;
-$primary-color-600: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), $primary-color;
+$primary-color-900: darken($primary-color, 40%);
+$primary-color-800: darken($primary-color, 30%);
+$primary-color-700: darken($primary-color, 20%);
+$primary-color-600: darken($primary-color, 10%);
 $primary-color-500: $primary-color;
-$primary-color-400: linear-gradient(0deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), $primary-color;
-$primary-color-300: linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), $primary-color;
-$primary-color-200: linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), $primary-color;
-$primary-color-100: linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), $primary-color;
+$primary-color-400: lighten($primary-color, 10%);
+$primary-color-300: lighten($primary-color, 20%);
+$primary-color-200: lighten($primary-color, 45%);
+$primary-color-100: lighten($primary-color, 47%);
 
 $secondary-color-900: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),$secondary-color;
 $secondary-color-800: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), $secondary-color;
 $secondary-color-700: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), $secondary-color;
 $secondary-color-600: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), $secondary-color;
 $secondary-color-500: $secondary-color;
-$secondary-color-400: linear-gradient(0deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), $secondary-color;
-$secondary-color-300: linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), $secondary-color;
-$secondary-color-200: linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), $secondary-color;
-$secondary-color-100: linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), $secondary-color;
+$secondary-color-400: linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.5)), $secondary-color;
+$secondary-color-300: linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.6)), $secondary-color;
+$secondary-color-200: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.8)), $secondary-color;
+$secondary-color-100: linear-gradient(0deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.9)), $secondary-color;
 
 $grey-color-900: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), $grey-color;
 $grey-color-800: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), $grey-color;
@@ -35,7 +35,7 @@ $grey-color-600: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), 
 $grey-color-500: $grey-color;
 $grey-color-400: linear-gradient(0deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), $grey-color;
 $grey-color-300: linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), $grey-color;
-$grey-color-200: linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), $grey-color;
+$grey-color-200: lighten($grey-color, 15%);
 $grey-color-100: linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), $grey-color;
 
 $success-color-900: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), $success-color;
@@ -67,3 +67,15 @@ $alert-color-400: linear-gradient(0deg, rgba(255, 255, 255, 0.5), rgba(255, 255,
 $alert-color-300: linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), $alert-color;
 $alert-color-200: linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), $alert-color;
 $alert-color-100: linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), $alert-color;
+
+$black-color-900: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), $black;
+$black-color-800: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), $black;
+$black-color-700: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), $black;
+$black-color-600: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), $black;
+$black-color-500: $black;
+$black-color-400: linear-gradient(0deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), $black;
+$black-color-300: linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), $black;
+$black-color-200: linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), $black;
+$black-color-100: linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), $black;
+
+$text-light-primary: #211F1F;

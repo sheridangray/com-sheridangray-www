@@ -1,11 +1,15 @@
 @import "../../styles/colors";
+
 .header-container {
   width: 100%;
   height: 60px;
   display: flex;
   justify-content: space-between;
+  background-color: $white;
   padding: 0 8px;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 5;
+
   .logo {
     // width: 90px;
     display: flex;
@@ -14,6 +18,7 @@
     font-weight: 400;
     text-decoration: none;
   }
+  
   .options {
     height: 100%;
     display: flex;
@@ -24,10 +29,12 @@
         cursor: pointer;
     }
   }
+  
   .signed-in {
     display: flex;
     justify-content: space-between;
   }
+  
   .nav-link {
     font-size: 12px;
     padding: 0 10px;
@@ -44,6 +51,7 @@
     }
   }
 }
+
 .profile-badge {
   height: 30px;
   width: 30px;
@@ -52,6 +60,7 @@
   margin-left: 12px;
   margin-top: 13px;
 }
+
 @media only screen and (min-width: 600px) {
   .header-container {
     padding: 0 16px;
