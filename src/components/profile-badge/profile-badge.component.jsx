@@ -11,7 +11,7 @@ const ProfileBadge = () => {
     const dispatch = useDispatch();
     return (
         <>
-        <img src={currentUser.photoURL} className="profile-badge" onClick={() => dispatch(toggleProfileMenuHidden())}/>
+        <img src={currentUser.photoUrl} className="profile-badge" alt="Profile" onClick={() => dispatch(toggleProfileMenuHidden())}/>
         </>
     )
 }
