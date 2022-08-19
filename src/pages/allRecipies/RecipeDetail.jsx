@@ -13,9 +13,10 @@ import share from "../../assets/food/share.svg";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { BASE_URI } from "../../Api/api";
+import moment from "moment";
+import { format } from "date-fns";
 
 const RecipeDetail = () => {
-  
   const [recipeDetails, setRecipeDetails] = useState([]);
   const [modalView, setModalView] = useState(false);
   const [mealPlannerModalView, setMealPlannerModalView] = useState(false);
@@ -28,7 +29,8 @@ const RecipeDetail = () => {
   const location = useLocation();
 
   //datepicker-//calendar
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date()); //. We created a state to store a date and
+  //passed the current date as its initial value using JavaScript’s Date object
   const days = [
     "Sunday",
     "Monday",
@@ -39,7 +41,9 @@ const RecipeDetail = () => {
     "Saturday",
   ];
   let dayNumer = date.getDay();
+  console.log(dayNumer);
   const dayName = days[dayNumer];
+  console.log(dayName, "NAAAAM");
 
   //date format
 
@@ -69,11 +73,12 @@ const RecipeDetail = () => {
     fetchRecipeDetails();
   }, []);
 
-  const testFunction = (e) => {
+  const testFunction = (e,dayName) => {
+    console.log(dayName);
     console.log("testfunction");
     let recipeInfo = JSON.stringify({
       day: dayName,
-      date: e.toISOString().split("T")[0],
+      date: format(e, "yyyy-MM-dd"),
       categoryId: recipeDetails.categories[0]._id,
       recipeId: recipeDetails._id,
     });
@@ -125,9 +130,10 @@ const RecipeDetail = () => {
       return { allChecked, data };
     });
   };
-  const handleDate = (e) => {
+  const handleDate = (e,dayName) => {
+    alert("Date Selected Succesfully");
     setDate(e);
-    testFunction(e);
+    testFunction(e,dayName);
   };
   return (
     <div className="meal_planner_col">
@@ -304,14 +310,14 @@ const RecipeDetail = () => {
               <div className="app">
                 <h1 className="text-center"></h1>
                 <div className="calendar-container">
-                  <Calendar onChange={(e) => handleDate(e)} value={date} />
+                  <Calendar onChange={(e) => handleDate(e,dayName)} value={date} />
                 </div>
                 <p className="text-center">
                   <span className="bold">Selected Date:</span>{" "}
                   {/* {date.toDateString()}  */}
-                  {/* {JSON.stringify(dayName)} */}
+                  {JSON.stringify(dayName)}
                   {/* {JSON.stringify(time)} */}
-                  {JSON.stringify(date.toISOString().split("T")[0])}
+                  {JSON.stringify(format(date, "yyyy-MM-dd"))}
                 </p>
               </div>
             </div>

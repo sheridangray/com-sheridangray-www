@@ -8,26 +8,6 @@ import { useState } from "react";
 import { BASE_URI } from "../../Api/api";
 
 const WeeklyPlannerPage = () => {
-  const [mealData, setMealData] = useState();
-
-  // const startDate=
-  // const endDate=
-
-  const fetchMealData = async () => {
-    try {
-      const res = await fetch(`${BASE_URI}meals/getMealsByDate?startDate=2022-08-01&endDate=2022-08-11`);
-      const result = await res.json();
-      console.log(result);
-      setMealData(result?.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-useEffect(() => {
-    fetchMealData();
-  }, []);  
-
   return (
     <div className="weekly-planner">
       <h1 className="page-title">Weekly Planner</h1>
